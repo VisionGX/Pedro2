@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+		"module": "NodeNext",
+		"esModuleInterop": true,
+		"target": "ES6",
+		"moduleResolution": "Node",
+		"removeComments": true,
+		"outDir": "./dist",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+    },
+    "include": [
+        "./src/**/*.ts"
+	]
+}
