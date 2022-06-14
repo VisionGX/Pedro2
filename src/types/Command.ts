@@ -6,7 +6,7 @@ interface Command {
 	name: string;
 	description: string;
 	usage: string;
-	execute(client:Bot, message:Message, args:string[], guildData: GuildData): Promise<unknown>;
+	execute(client:Bot, message:Message, args:string[], guildData?: GuildData | null): Promise<unknown>;
 }
 
 export { Command }

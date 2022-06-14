@@ -4,6 +4,10 @@ import Bot from "../../Bot";
 
 
 export default async (client: Bot) => {
-	console.log(`Ready as ${client.user.username}`, "App started");
+	if (!client.user){
+		client.logger.error("User is not defined");
+		return;
+	}
+	client.logger.info("Logged in as " + client.user.tag);
 	client.user.setActivity(`${client.config.activity.message}`, { type: `${client.config.activity.type}` as ExcludeEnum<typeof ActivityTypes, "CUSTOM"> });
 };

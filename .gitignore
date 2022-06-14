@@ -1,4 +1,5 @@
-temp
+temp/**
 dist
 node_modules
-config/index.js
+config/**
+!config/example.*
