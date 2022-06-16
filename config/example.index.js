@@ -26,7 +26,7 @@ module.exports = {
 	},
 	// Logging
 	logging: {
-		enabled: true,
+		enabled: false,
 		channel: 'Discord Channel ID',
 		level: 'warning',
 	},

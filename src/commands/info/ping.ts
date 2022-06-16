@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import Bot from "../../Bot";
 
 export default {
@@ -6,6 +6,11 @@ export default {
 	description: "Ping the bot",
 	usage: "ping",
 	execute(client: Bot, message: Message, args: string[]) {
-		return message.channel.send("Pong!");
+		message.reply({embeds: [
+			new MessageEmbed()
+				.setTitle(`Ready!`)
+				.setDescription(`The Ping is: ${client.ws.ping}ms`)
+				.setColor(`#${client.config.embedColor}`)
+		]});
 	}
 };

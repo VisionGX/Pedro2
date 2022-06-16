@@ -1,5 +1,5 @@
 import { Client, Collection, Intents } from "discord.js";
-import { Command } from "./types/Command";
+import { Command, Interaction } from "./types/Command";
 import * as fs from "fs";
 import SPDatabase from "./database";
 import { Log } from "./util/Logger";
@@ -9,6 +9,7 @@ class Bot extends Client {
 	logger: Log.Logger;
 	config: BotConfig;
 	commands: Collection<string, Command>;
+	interactions: Collection<string, Interaction>;
 	database: SPDatabase;
 	constructor() {
 		super({
@@ -23,6 +24,7 @@ class Bot extends Client {
 		});
 		this.logger = new Log.Logger();
 		this.commands = new Collection();
+		this.interactions = new Collection();
 		this.config = require("../config");
 		this.database = new SPDatabase(this.config.database);
 	}
@@ -30,7 +32,7 @@ class Bot extends Client {
 		fs.readdirSync(`${__dirname}/events`).forEach(dir => {
 			fs.readdirSync(`${__dirname}/events/${dir}`).forEach(file => {
 				const event = require(`./events/${dir}/${file}`).default;
-				console.log(`Loading Event ${file}`);
+				this.logger.info(`Loading Event ${file}`);
 				this.on(file.split(".")[0], event.bind(null, this));
 			});
 		});
@@ -39,8 +41,26 @@ class Bot extends Client {
 		fs.readdirSync(`${__dirname}/commands`).forEach(dir => {
 			fs.readdirSync(`${__dirname}/commands/${dir}`).forEach(file => {
 				const command: Command = require(`./commands/${dir}/${file}`).default;
-				console.log(`Loading Command ${file}`);
+				this.logger.info(`Loading Command ${file}`);
 				this.commands.set(command.name, command);
+			});
+		});
+	}
+	async loadInteractions() {
+		fs.readdirSync(`${__dirname}/interactions`).forEach(dir => {
+			const interactions = fs.readdirSync(`${__dirname}/interactions/${dir}`).filter(file => file.endsWith(".js"));
+			interactions.forEach(file => {
+				const interaction = require(`./interactions/${dir}/${file}`).default;
+				this.logger.info(`Loading Interaction ${file}`);
+				this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
+			});
+			fs.readdirSync(`${__dirname}/interactions/${dir}`).filter(file => !file.endsWith(".js")).forEach(subdir => {
+				const subinteractions = fs.readdirSync(`${__dirname}/interactions/${dir}/${subdir}`).filter(file => file.endsWith(".js"));
+				subinteractions.forEach(file => {
+					const interaction:Interaction = require(`./interactions/${dir}/${subdir}/${file}`).default;
+					this.logger.info(`Loading Interaction ${file}`);
+					this.interactions.set(interaction.name!.replace(/\s/g, "_"), interaction);
+				});
 			});
 		});
 	}
@@ -48,8 +68,8 @@ class Bot extends Client {
 		await this.database.init();
 		await this.registerEvents();
 		await this.loadCommands();
+		await this.loadInteractions();
 		await this.login(this.config.token);
 	}
 }
 export default Bot;
-

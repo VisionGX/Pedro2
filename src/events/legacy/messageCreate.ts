@@ -21,8 +21,8 @@ export default async (client: Bot, message: Message) => {
 		try {
 			command.execute(client, message, args, null);
 		} catch (e) {
-			console.error(e);
-			message.reply("Ha ocurrido un error al ejecutar el comando.");
+			client.logger.error(e as Error);
+			message.reply("An error happened while executing that command.");
 		}
 	} else {
 		const repo = client.database.source.getRepository(GuildData);
@@ -35,8 +35,8 @@ export default async (client: Bot, message: Message) => {
 		try {
 			command.execute(client, message, args, guildData);
 		} catch (e) {
-			console.error(e);
-			message.reply("Ha ocurrido un error al ejecutar el comando.");
+			client.logger.error(e as Error);
+			message.reply("An error happened while executing that command.");
 		}
 	}
 };

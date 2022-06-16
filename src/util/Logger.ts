@@ -31,8 +31,16 @@ export namespace Log {
 		warn(message: string, ...args: any[]) {
 			this.logger.warn(message, ...args);
 		}
-		error(message: string, ...args: any[]) {
-			this.logger.error(message, ...args);
+		
+		error(error: Error): void;
+		error(message: string, ...args: any[]):void;
+
+		error(either: string | Error, ...args: any[]) {
+			if(typeof either === "string") {
+				this.logger.error(either, ...args);
+			} else {
+				this.logger.error(either);
+			}
 		}
 		debug(message: string, ...args: any[]) {
 			this.logger.debug(message, ...args);
