@@ -14,7 +14,7 @@ export default {
 			new MessageEmbed()
 				.setTitle(`Ready!`)
 				.setDescription(`Ping: ${client.ws.ping}ms`)
-				.setColor(`#${client.config.embedColor}`)
+				.setColor(`#${client.config.defaultEmbedColor}`)
 		]});
 		client.emit("updateInteractions", message.guild);
 	},

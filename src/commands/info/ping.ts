@@ -10,7 +10,7 @@ export default {
 			new MessageEmbed()
 				.setTitle(`Ready!`)
 				.setDescription(`The Ping is: ${client.ws.ping}ms`)
-				.setColor(`#${client.config.embedColor}`)
+				.setColor(`#${client.config.defaultEmbedColor}`)
 		]});
 	}
 };

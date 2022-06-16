@@ -6,7 +6,7 @@ type BotConfig = {
 		message: string;
 		type: string;
 	};
-	embedColor: string;
+	defaultEmbedColor: string;
 
 	// Database
 	database: DatabaseConfig;

@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import MessageEmbed from "./MessageEmbed";
 
 @Entity()
-export default class GuildWelcome {
+export default class GuildVerify {
 	@PrimaryColumn({
 		type: "varchar",
 		length: "18",
@@ -24,7 +24,12 @@ export default class GuildWelcome {
 	@OneToOne(() => MessageEmbed)
 	@JoinColumn()
 	message?: MessageEmbed;
-	
 
+	@Column({
+		nullable: true,
+		type: "varchar",
+		length: "18",
+	})
+	verifyRole?: string;
 	
 }

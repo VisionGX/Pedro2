@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import GuildVerify from "./GuildVerify";
 import GuildWelcome from "./GuildWelcome";
 
 @Entity()
@@ -37,4 +38,8 @@ export default class GuildData {
 	@OneToOne(() => GuildWelcome)
     @JoinColumn()
 	welcome?: GuildWelcome;
+
+	@OneToOne(()=> GuildVerify)
+	@JoinColumn()
+	verify?: GuildVerify;
 }

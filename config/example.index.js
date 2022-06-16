@@ -8,7 +8,7 @@ module.exports = {
 		message: 'Activity Name',
 		type: 'PLAYING',
 	},
-	embedColor: '0099ff',
+	defaultEmbedColor: '0099ff',
 	// Database
 	database: {
 		// Either 'sqlite' or 'mysql'
