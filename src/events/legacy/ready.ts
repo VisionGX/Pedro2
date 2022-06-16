@@ -10,4 +10,6 @@ export default async (client: Bot) => {
 	}
 	client.logger.info("Logged in as " + client.user.tag);
 	client.user.setActivity(`${client.config.activity.message}`, { type: `${client.config.activity.type}` as ExcludeEnum<typeof ActivityTypes, "CUSTOM"> });
+
+	client.logger.info("App Started");
 };
