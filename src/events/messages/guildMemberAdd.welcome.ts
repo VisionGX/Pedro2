@@ -16,12 +16,15 @@ export default async (client: Bot, member: GuildMember) => {
 	if (!guildWelcome.enabled) return;
 	if (!guildWelcome.channel) return;
 
-	if (guildWelcome.message) welcomeEmbed.setDescription(guildWelcome.message);
-	if (guildWelcome.imageURL) welcomeEmbed.setImage(guildWelcome.imageURL);
-	if (guildWelcome.thumbnail) welcomeEmbed.setThumbnail(guildWelcome.thumbnail);
-	if (guildWelcome.footer) welcomeEmbed.setFooter({ text: guildWelcome.footer });
-	if (guildWelcome.title) welcomeEmbed.setTitle(guildWelcome.title);
-	if (guildWelcome.titleURL) welcomeEmbed.setURL(guildWelcome.titleURL);
+	const { message } = guildWelcome;
+	if (!message) return;
+
+	if (message.content) welcomeEmbed.setDescription(message.content);
+	if (message.imageURL) welcomeEmbed.setImage(message.imageURL);
+	if (message.thumbnail) welcomeEmbed.setThumbnail(message.thumbnail);
+	if (message.footer) welcomeEmbed.setFooter({ text: message.footer });
+	if (message.title) welcomeEmbed.setTitle(message.title);
+	if (message.titleURL) welcomeEmbed.setURL(message.titleURL);
 
 	let channel = member.guild.channels.cache.get(guildWelcome.channel);
 	if (!channel) {
