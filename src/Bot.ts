@@ -1,5 +1,5 @@
 import { Client, Collection, Intents } from "discord.js";
-import { Command, Interaction } from "./types/Command";
+import { Command, Interaction } from "./types/Executors";
 import * as fs from "fs";
 import SPDatabase from "./database";
 import { Log } from "./util/Logger";
