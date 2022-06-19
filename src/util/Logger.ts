@@ -8,7 +8,7 @@ export namespace Log {
 			if(Logger.instance) 
 				return Logger.instance;
 			this.logger = winston.createLogger({
-				level: "info",
+				level: process.env.DEBUG == "1" ? "debug": "info",
 				format: winston.format.json(),
 				transports: [
 					new winston.transports.Console({
@@ -42,8 +42,15 @@ export namespace Log {
 				this.logger.error(either);
 			}
 		}
-		debug(message: string, ...args: any[]) {
-			this.logger.debug(message, ...args);
+
+		debug(object: any): void;
+		debug(message: string, ...args: any[]):void;
+		debug(arg0: string | any, ...args: any[]) {
+			if(typeof arg0 === "string") {
+				this.logger.debug(arg0, ...args);
+			} else {
+				this.logger.debug(arg0);
+			}
 		}
 		silly(message: string, ...args: any[]) {
 			this.logger.silly(message, ...args);
