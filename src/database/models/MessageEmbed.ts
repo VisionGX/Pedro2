@@ -28,10 +28,8 @@ export default class MessageEmbed {
 
 	@Column({ nullable: true })
 	author?: string;
-	
+
 	@Column({ nullable: true })
 	authorURL?: string;
-
-
 
 }

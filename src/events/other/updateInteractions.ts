@@ -11,12 +11,13 @@ interface CleanInteraction {
 export default async (client: Bot, guild: Guild) => {
 	if(!guild){
 		const arr:CleanInteraction[] = [];
-		client.interactions.each(interaction => {
+		for await (const [,interaction] of client.interactions.entries()) {
+			if(interaction.type === "SUB_FUNCTION") continue;
 			const cleanInt:CleanInteraction = {...interaction};
 			!(interaction.type == "USER" || interaction.type == "MESSAGE") ? cleanInt.description = interaction.description : null;
 			cleanInt.category = null;
 			if(cleanInt.internal_category == "app")arr.push(cleanInt);
-		});
+		};
 		try {
 			client.application!.commands.set(arr);
 		} catch (e) {
@@ -26,12 +27,13 @@ export default async (client: Bot, guild: Guild) => {
 	}
 
 	const arr:CleanInteraction[] = [];
-	client.interactions.each(interaction => {
+	for await (const [,interaction] of client.interactions.entries()) {
+		if(interaction.type === "SUB_FUNCTION") continue;
 		const cleanInt:CleanInteraction = {...interaction};
 		!(interaction.type == "USER" || interaction.type == "MESSAGE") ? cleanInt.description =  interaction.description : null;
 		cleanInt.category = null;
 		if(cleanInt.internal_category == "guild")arr.push(cleanInt);
-	});
+	};
 	try {
 		await guild.commands.set(arr);
 	} catch(e) {

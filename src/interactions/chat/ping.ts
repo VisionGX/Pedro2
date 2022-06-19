@@ -1,6 +1,7 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import Bot from "../../Bot";
-export default {
+import { Interaction } from "../../types/Executors";
+const interaction:Interaction = {
 	name: "ping",
 	type: "CHAT_INPUT",
 	description: "Checks the bot's ping",
@@ -17,3 +18,4 @@ export default {
 		});
 	}
 };
+export default interaction;
