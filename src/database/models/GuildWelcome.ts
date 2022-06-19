@@ -24,7 +24,4 @@ export default class GuildWelcome {
 	@OneToOne(() => MessageEmbed)
 	@JoinColumn()
 	message?: MessageEmbed;
-	
-
-	
 }
