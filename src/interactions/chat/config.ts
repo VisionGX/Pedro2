@@ -12,7 +12,7 @@ const interaction: Interaction = {
 	options: [
 		{
 			name: "welcome",
-			description: "Configuration Category",
+			description: "Welcome Configuration",
 			type: "SUB_COMMAND_GROUP",
 			options: [
 				{
@@ -21,9 +21,10 @@ const interaction: Interaction = {
 					type: "SUB_COMMAND",
 					options: [
 						{
-							name: "enabled",
+							name: "status",
 							description: "Is the welcome message enabled.",
 							type: "BOOLEAN",
+							required: true,
 						}
 					]
 				},
@@ -33,122 +34,170 @@ const interaction: Interaction = {
 					type: "SUB_COMMAND",
 					options: [
 						{
-							name: "channel",
+							name: "welcome_channel",
 							description: "The channel the welcome message will be sent to.",
 							type: "CHANNEL",
+							required: true,
 						}
 					]
 				},
 				{
 					name: "message",
-					description: "Configure the welcome message.",
+					description: "Set the welcome message.",
 					type: "SUB_COMMAND",
 					options: [
 						{
-							name: "message",
-							description: "Message to be displayed when a new member joins the server.",
+							name: "name",
+							description: "The welcome message embed name.",
 							type: "STRING",
-							required: true
-						}
-					]
-				},
-				{
-					name: "image",
-					description: "Configure the welcome image.",
-					type: "SUB_COMMAND",
-					options: [
-						{
-							name: "image",
-							description: "Image to be displayed when a new member joins the server.",
-							type: "STRING",
-							required: true
-						}
-					]
-				},
-				{
-					name: "thumbnail",
-					description: "Configure the welcome thumbnail.",
-					type: "SUB_COMMAND",
-					options: [
-						{
-							name: "thumbnail",
-							description: "Thumbnail to be displayed when a new member joins the server.",
-							type: "STRING",
-							required: true
-						}
-					]
-				},
-				{
-					name: "footer",
-					description: "Configure the welcome footer.",
-					type: "SUB_COMMAND",
-					options: [
-						{
-							name: "footer",
-							description: "Footer to be displayed when a new member joins the server.",
-							type: "STRING",
-							required: true
-						},
-						{
-							name: "url",
-							description: "Footer Icon URL.",
-							type: "STRING",
-						}
-					]
-				},
-				{
-					name: "title",
-					description: "Configure the welcome title.",
-					type: "SUB_COMMAND",
-					options: [
-						{
-							name: "title",
-							description: "Title to be displayed when a new member joins the server.",
-							type: "STRING",
-							required: true
-						},
-						{
-							name: "url",
-							description: "URL in the title.",
-							type: "STRING",
-						}
-					]
-				},
-				{
-					name: "author",
-					description: "Configure the welcome author.",
-					type: "SUB_COMMAND",
-					options: [
-						{
-							name: "author",
-							description: "Author to be displayed when a new member joins the server.",
-							type: "STRING",
-							required: true
-						},
-						{
-							name: "url",
-							description: "Author Icon URL.",
-							type: "STRING",
+							required: true,
 						}
 					]
 				}
-			]
+			],
+		},
+		{
+			name: "verify",
+			description: "Verification Configuration",
+			type: "SUB_COMMAND_GROUP",
+			options: [
+				{
+					name: "enabled",
+					description: "Enable/Disable the verify message.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "status",
+							description: "Is the verify message enabled.",
+							type: "BOOLEAN",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "channel",
+					description: "Set the channel the verify message will be sent to.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "verify_channel",
+							description: "The channel the verify message will be sent to.",
+							type: "CHANNEL",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "message",
+					description: "Set the welcome message.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "name",
+							description: "The verify message embed name.",
+							type: "STRING",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "button_label",
+					description: "Set the button label.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "label",
+							description: "The button label.",
+							type: "STRING",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "button_emoji",
+					description: "Set the button emoji.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "emoji",
+							description: "The button emoji.",
+							type: "STRING",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "role",
+					description: "Set the role the user will be given when they verify.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "verified_role",
+							description: "The role the user will be given when they verify.",
+							type: "ROLE",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "send",
+					description: "Send the verification message to the configured channel.",
+					type: "SUB_COMMAND",
+				}
+			],
+		},
+		{
+			name: "init",
+			description: "Initialize the bot's behaviour in this server.",
+			type: "SUB_COMMAND",
 		}
 	],
-	async execute(client: Bot, interaction: CommandInteraction, guildData: GuildData) {
-		const group = interaction.options.getSubcommandGroup();
+	async execute(client: Bot, interaction: CommandInteraction) {
+		if (
+			!interaction.memberPermissions?.has("MANAGE_GUILD") &&
+			!interaction.memberPermissions?.has("ADMINISTRATOR") &&
+			!client.config.admins.includes(interaction.user.id)
+		) return interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("You do not have permission to use this command.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
 		const category = interaction.options.getSubcommand();
+
+		if (category === "init" && interaction.guildId) {
+			const guildDataRepo = client.database.source.getRepository(GuildData);
+			const guildData = await guildDataRepo.findOne({ where: { guildId: interaction.guildId } });
+			if (!guildData) {
+				const newGuildData = new GuildData();
+				newGuildData.guildId = interaction.guildId;
+				await guildDataRepo.save(newGuildData);
+			}
+			return interaction.reply({
+				embeds: [
+					new MessageEmbed()
+						.setTitle("Successfully initialized.")
+						.setColor(`#${client.config.defaultEmbedColor}`)
+				],
+				ephemeral: true
+			});
+		}
+
+		const group = interaction.options.getSubcommandGroup();
+
 
 		const inter = client.interactions.get(`${group}_${category}`);
 		if (!inter) return interaction.reply({
 			embeds: [
 				new MessageEmbed()
-					.setTitle(`Configuration not found`)
+					.setTitle("Configuration not found")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
 		});
 
-		await inter.execute(client, interaction, guildData);
+		await inter.execute(client, interaction);
 
 
 	}

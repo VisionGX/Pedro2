@@ -1,0 +1,57 @@
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import Bot from "../../../Bot";
+import GuildVerify from "../../../database/models/GuildVerify";
+import { Interaction } from "../../../types/Executors";
+
+const interaction: Interaction = {
+	name: "verify button label",
+	type: "SUB_FUNCTION",
+	description: "Configure the verify button label.",
+	category: "config",
+	internal_category: "sub",
+	async execute(client: Bot, interaction: CommandInteraction) {
+		const verifyRepo = client.database.source.getRepository(GuildVerify);
+		const verify = await verifyRepo.findOne({ where: { guildId:`${interaction.guildId}` } });
+		if(!verify) return interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("Verify Message not found")
+					.setDescription("Please enable the verify message first.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			]
+		});
+		const label = interaction.options.getString("label");
+		if(!label) return interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("No label provided")
+					.setDescription("Please provide a label.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+		// Label is a string up to 25 characters long and can only contain letters, numbers, spaces, and underscores.
+		const labelRegex = /^[a-zA-Z0-9 _]{1,25}$/;
+		if(!labelRegex.test(label)) return interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("Invalid label")
+					.setDescription("Please provide a valid label.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+		verify.label = label;
+		await verifyRepo.save(verify);
+
+		return interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("Verify Button Label Updated")
+					.setDescription("The verify button label has been updated.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			]
+		});
+	}
+};
+export default interaction;

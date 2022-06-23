@@ -6,7 +6,7 @@ interface Command {
 	name: string;
 	description: string;
 	usage: string;
-	execute(client:Bot, message:Message, args:string[], guildData?: GuildData | null): Promise<unknown>;
+	execute(client:Bot, message:Message, args:string[]): Promise<unknown>;
 }
 interface Interaction {
 	type: "CHAT_INPUT" | "CONTEXT_MENU"| "USER"| "MESSAGE" | "SUB_FUNCTION";
@@ -15,8 +15,8 @@ interface Interaction {
 	category: string;
 	internal_category: "app" | "guild" | "sub";
 	options?: ApplicationCommandOption[];
-	execute<T = CommandInteraction>(client: Bot, interaction: T, guildData?:GuildData | null):Promise<unknown>;
-	execute<T = ContextMenuInteraction>(client: Bot, interaction: T, guildData?:GuildData | null):Promise<unknown>;
+	execute<T = CommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
+	execute<T = ContextMenuInteraction>(client: Bot, interaction: T):Promise<unknown>;
 }
 
 export { Command, Interaction };

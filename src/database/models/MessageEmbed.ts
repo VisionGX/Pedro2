@@ -1,35 +1,54 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import GuildData from "./GuildData";
+import MessageEmbedField from "./MessageEmbedField";
 
 @Entity()
-export default class MessageEmbed {
+export default class GuildMessageEmbed {
 	@PrimaryGeneratedColumn()
-	id!: number;
+		id!: number;
+
+	@Column({
+		unique: true,
+	})
+		name!: string;
 
 	@Column({ nullable: true })
-	content?: string;
+		description?: string;
 
 	@Column({ nullable: true })
-	imageURL?: string;
+		imageURL?: string;
 
 	@Column({ nullable: true })
-	thumbnail?: string;
+		thumbnailURL?: string;
 
 	@Column({ nullable: true })
-	footer?: string;
+		footer?: string;
 
 	@Column({ nullable: true })
-	footerURL?: string;
+		footerURL?: string;
 
 	@Column({ nullable: true })
-	title?: string;
+		title?: string;
 
 	@Column({ nullable: true })
-	titleURL?: string;
+		titleURL?: string;
 
 	@Column({ nullable: true })
-	author?: string;
+		author?: string;
 
 	@Column({ nullable: true })
-	authorURL?: string;
+		authorURL?: string;
 
+	@Column({ nullable: true })
+		color?: string;
+
+	@OneToMany(() => MessageEmbedField, field => field.embed, {
+		eager: true,
+		orphanedRowAction: "delete",
+	})
+	@JoinTable()
+		fields!: MessageEmbedField[];
+
+	@ManyToOne(() => GuildData)
+		guildData!: GuildData;
 }

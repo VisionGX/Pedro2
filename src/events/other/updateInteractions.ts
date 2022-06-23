@@ -17,9 +17,9 @@ export default async (client: Bot, guild: Guild) => {
 			!(interaction.type == "USER" || interaction.type == "MESSAGE") ? cleanInt.description = interaction.description : null;
 			cleanInt.category = null;
 			if(cleanInt.internal_category == "app")arr.push(cleanInt);
-		};
+		}
 		try {
-			client.application!.commands.set(arr);
+			client.application?.commands.set(arr);
 		} catch (e) {
 			console.log("Error while updating App Interactions: ", e);
 		}
@@ -33,7 +33,7 @@ export default async (client: Bot, guild: Guild) => {
 		!(interaction.type == "USER" || interaction.type == "MESSAGE") ? cleanInt.description =  interaction.description : null;
 		cleanInt.category = null;
 		if(cleanInt.internal_category == "guild")arr.push(cleanInt);
-	};
+	}
 	try {
 		await guild.commands.set(arr);
 	} catch(e) {

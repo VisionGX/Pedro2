@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
-import MessageEmbed from "./MessageEmbed";
+import GuildMessageEmbed from "./MessageEmbed";
 
 @Entity()
 export default class GuildWelcome {
@@ -7,21 +7,23 @@ export default class GuildWelcome {
 		type: "varchar",
 		length: "18",
 	})
-	guildId!: string;
+		guildId!: string;
 
 	@Column({
 		nullable: true,
 	})
-	enabled?: boolean;
+		enabled?: boolean;
 	
 	@Column({
 		nullable: true,
 		type: "varchar",
 		length: "18",
 	})
-	channel?: string;
+		channel?: string;
 
-	@OneToOne(() => MessageEmbed)
+	@OneToOne(() => GuildMessageEmbed,{
+		eager: true
+	})
 	@JoinColumn()
-	message?: MessageEmbed;
+		message?: GuildMessageEmbed;
 }

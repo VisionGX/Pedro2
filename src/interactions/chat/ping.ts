@@ -11,7 +11,7 @@ const interaction:Interaction = {
 		interaction.reply({
 			embeds: [
 				new MessageEmbed()
-					.setTitle(`Pong!`)
+					.setTitle("Pong!")
 					.setDescription(`The ping is: ${client.ws.ping}ms`)
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import winston from "winston";
 
 export namespace Log {

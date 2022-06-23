@@ -1,10 +1,10 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
-import GuildWelcome from "../../../database/models/GuildWelcome";
+import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
-	name: "welcome enabled",
+	name: "verify enabled",
 	type: "SUB_FUNCTION",
 	description: "Configure the welcome message enabled.",
 	category: "config",
@@ -20,22 +20,22 @@ const interaction: Interaction = {
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
 		});
-		const welcomeRepo = client.database.source.getRepository(GuildWelcome);
+		const verifyRepo = client.database.source.getRepository(GuildVerify);
 		const enabled = interaction.options.getBoolean("status") || false;
-		const welcome = await welcomeRepo.findOne({ where: { guildId: guildData.guildId } });
-		if (welcome) {
-			await welcomeRepo.save({ ...welcome, enabled });
+		const verify = await verifyRepo.findOne({ where: { guildId: guildData.guildId } });
+		if (verify) {
+			await verifyRepo.save({ ...verify, enabled });
 		} else {
 			const guildRepo = client.database.source.getRepository(GuildData);
-			const newWelcome = welcomeRepo.create({ guildId: guildData.guildId, enabled });
-			await welcomeRepo.save(newWelcome);
-			await guildRepo.save({ ...guildData, welcome: newWelcome });
+			const newVerify = verifyRepo.create({ guildId: guildData.guildId, enabled });
+			await verifyRepo.save(newVerify);
+			await guildRepo.save({ ...guildData, verify: newVerify });
 		}
 		await interaction.reply({
 			embeds: [
 				new MessageEmbed()
-					.setTitle("Welcome Message Config")
-					.setDescription(`Welcome message is now ${enabled ? "**enabled**" : "**disabled**"}`)
+					.setTitle("Verify Message Config")
+					.setDescription(`Verify message is now ${enabled ? "**enabled**" : "**disabled**"}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
 		});

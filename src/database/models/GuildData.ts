@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import GuildVerify from "./GuildVerify";
 import GuildWelcome from "./GuildWelcome";
+import GuildMessageEmbed from "./MessageEmbed";
 
 @Entity()
 export default class GuildData {
@@ -8,38 +9,50 @@ export default class GuildData {
 		type: "varchar",
 		length: "18",
 	})
-	guildId!: string;
+		guildId!: string;
 
 	@Column({
 		nullable: true,
 	})
-	prefix?: string;
+		prefix?: string;
 
 	@Column({
 		nullable: true,
 	})
-	adminRole?: string;
+		adminRole?: string;
 
 	@Column({
 		nullable: true
 	})
-	modRole?: string;
+		modRole?: string;
 
 	@Column({
 		nullable: true
 	})
-	memberRole?: string;
+		memberRole?: string;
 
 	@Column({
 		nullable: true
 	})
-	logChannel?: string;
+		logChannel?: string;
 
-	@OneToOne(() => GuildWelcome)
-    @JoinColumn()
-	welcome?: GuildWelcome;
-
-	@OneToOne(()=> GuildVerify)
+	@OneToOne(() => GuildWelcome, {
+		nullable: true,
+		eager: true,
+		orphanedRowAction: "delete",
+	})
 	@JoinColumn()
-	verify?: GuildVerify;
+		welcome?: GuildWelcome;
+
+	@OneToOne(() => GuildVerify, {
+		nullable: true,
+		eager: true,
+		orphanedRowAction: "delete"
+	})
+	@JoinColumn()
+		verify?: GuildVerify;
+
+	@OneToMany(() => GuildMessageEmbed, (embed) => embed.guildData)
+	@JoinTable()
+		embeds!: GuildMessageEmbed[];
 }

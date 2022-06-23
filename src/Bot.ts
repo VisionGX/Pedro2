@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Client, Collection, Intents } from "discord.js";
 import { Command, Interaction } from "./types/Executors";
 import * as fs from "fs";
@@ -59,7 +60,7 @@ class Bot extends Client {
 				subinteractions.forEach(file => {
 					const interaction:Interaction = require(`./interactions/${dir}/${subdir}/${file}`).default;
 					this.logger.info(`Loading Interaction ${file}`);
-					this.interactions.set(interaction.name!.replace(/\s/g, "_"), interaction);
+					this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
 				});
 			});
 		});

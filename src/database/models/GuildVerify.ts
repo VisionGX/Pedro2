@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
-import MessageEmbed from "./MessageEmbed";
+import GuildMessageEmbed from "./MessageEmbed";
 
 @Entity()
 export default class GuildVerify {
@@ -7,29 +7,47 @@ export default class GuildVerify {
 		type: "varchar",
 		length: "18",
 	})
-	guildId!: string;
+		guildId!: string;
 
 	@Column({
 		nullable: true,
 	})
-	enabled?: boolean;
-	
+		enabled?: boolean;
+
 	@Column({
 		nullable: true,
 		type: "varchar",
 		length: "18",
 	})
-	channel?: string;
+		channel?: string;
 
-	@OneToOne(() => MessageEmbed)
+	@Column({
+		nullable: true,
+		type: "varchar",
+		length: "80",
+		default: "Verify",
+	})
+		label?: string;
+
+	@Column({
+		nullable: true,
+		type: "varchar",
+		length: "18",
+		default: "white_check_mark",
+	})
+		emoji?: string;
+
+	@Column({
+		nullable: true,
+		type: "varchar",
+		length: "18",
+	})
+		verifyRole?: string;
+
+	@OneToOne(() => GuildMessageEmbed, {
+		eager: true
+	})
 	@JoinColumn()
-	message?: MessageEmbed;
+		message?: GuildMessageEmbed;
 
-	@Column({
-		nullable: true,
-		type: "varchar",
-		length: "18",
-	})
-	verifyRole?: string;
-	
 }

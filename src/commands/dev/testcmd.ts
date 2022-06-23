@@ -12,10 +12,11 @@ export default {
 		if(!message.member?.permissions.has(Permissions.FLAGS.ADMINISTRATOR) && !(client.config.admins.includes(message.member?.id as string))) return;
 		message.reply({embeds: [
 			new MessageEmbed()
-				.setTitle(`Ready!`)
+				.setTitle("Ready!")
 				.setDescription(`Ping: ${client.ws.ping}ms`)
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]});
+		client.emit("updateInteractions");
 		client.emit("updateInteractions", message.guild);
 	},
 };

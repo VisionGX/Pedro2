@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import Bot from "../../Bot";
-import GuildData from "../../database/models/GuildData";
 
 export default async (client: Bot, message: Message) => {
 	if (message.author.bot) return;
@@ -17,26 +16,5 @@ export default async (client: Bot, message: Message) => {
 	const command = client.commands.get(commandName);
 	if (!command) return;
 
-	if (!message.guild) {
-		try {
-			command.execute(client, message, args, null);
-		} catch (e) {
-			client.logger.error(e as Error);
-			message.reply("An error happened while executing that command.");
-		}
-	} else {
-		const repo = client.database.source.getRepository(GuildData);
-		let guildData = await repo.findOne({ where: { guildId: message.guild.id } });
-		if (!guildData) {
-			guildData = new GuildData();
-			guildData.guildId = message.guild.id;
-			await repo.save(guildData);
-		}
-		try {
-			command.execute(client, message, args, guildData);
-		} catch (e) {
-			client.logger.error(e as Error);
-			message.reply("An error happened while executing that command.");
-		}
-	}
+	command.execute(client, message, args);
 };
