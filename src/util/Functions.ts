@@ -23,6 +23,7 @@ function buildEmbedFrom(dbembed: GuildMessageEmbed): MessageEmbed {
 	for (let i = 0; (i < dbembed.fields.length && i < 25); i++) {
 		embed.addField(dbembed.fields[i].title, dbembed.fields[i].value);
 	}
+	if (dbembed.color && dbembed.color !== "") embed.setColor(`#${dbembed.color}`);
 	return embed;
 }
 
