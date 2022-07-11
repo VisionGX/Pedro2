@@ -57,6 +57,45 @@ const interaction: Interaction = {
 			],
 		},
 		{
+			name: "suggestions",
+			description: "Suggestions Configuration",
+			type: "SUB_COMMAND_GROUP",
+			options: [
+				{
+					name: "enabled",
+					description: "Enable/Disable the suggestions.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "status",
+							description: "Is the suggest command enabled.",
+							type: "BOOLEAN",
+							required: true,
+						}
+					]
+				},
+				{
+					name: "channels",
+					description: "Set the channel the welcome message will be sent to.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "admin_channel",
+							description: "The channel suggestions will be sent to be reviewed.",
+							type: "CHANNEL",
+							required: true,
+						},
+						{
+							name: "vote_channel",
+							description: "The channel suggestions will be sent to be voted for.",
+							type: "CHANNEL",
+							required: true,
+						}
+					]
+				},
+			],
+		},
+		{
 			name: "verify",
 			description: "Verification Configuration",
 			type: "SUB_COMMAND_GROUP",
@@ -147,6 +186,75 @@ const interaction: Interaction = {
 			],
 		},
 		{
+			name: "minecraft",
+			description: "Initialize the bot's behaviour in this server.",
+			type: "SUB_COMMAND_GROUP",
+			options: [
+				{
+					name: "enabled",
+					description: "Enable/Disable the Minecraft server module.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "status",
+							description: "Is the Minecraft server module enabled.",
+							type: "BOOLEAN",
+							required: true,
+						},
+						{
+							name: "server_name",
+							description: "PaperAPI Plugin provided unique Id.",
+							type: "STRING",
+						}
+					]
+				},
+				{
+					name: "log",
+					description: "Set Up the logging system.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "enabled",
+							description: "Enable/Disable the logging system.",
+							type: "BOOLEAN",
+							required: true,
+						},
+						{
+							name: "channel",
+							description: "Set the channel the logging will be sent to.",
+							type: "CHANNEL",
+						},
+					]
+				}
+			]
+		},
+		{
+			name: "museum",
+			description: "Set a Museum dedicated Channel.",
+			type: "SUB_COMMAND",
+			options: [
+				{
+					name: "channel",
+					description: "Set the channel Museum Messages will be Saved to.",
+					type: "CHANNEL",
+					required: true,
+				}
+			]
+		},
+		{
+			name: "confessions",
+			description: "Set a Confessions dedicated Channel.",
+			type: "SUB_COMMAND",
+			options: [
+				{
+					name: "channel",
+					description: "Set the channel confession messages will be Sent to.",
+					type: "CHANNEL",
+					required: true,
+				}
+			]
+		},
+		{
 			name: "init",
 			description: "Initialize the bot's behaviour in this server.",
 			type: "SUB_COMMAND",
@@ -185,7 +293,7 @@ const interaction: Interaction = {
 			});
 		}
 
-		const group = interaction.options.getSubcommandGroup();
+		const group = interaction.options.getSubcommandGroup(false) ? interaction.options.getSubcommandGroup() : "config";
 
 
 		const inter = client.interactions.get(`${group}_${category}`);
