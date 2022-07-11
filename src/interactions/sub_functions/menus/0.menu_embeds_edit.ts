@@ -51,7 +51,7 @@ const interaction: Interaction = {
 		for (const [key,] of Object.entries(embed)){
 			if (key === "id" || key == "name" || key == "guildData") continue;
 			const option = {
-				label: key,
+				label: `${key.charAt(0).toUpperCase() + key.slice(1)}`,
 				value: `${key}`,
 			};
 			menu.addOptions(option);

@@ -175,6 +175,10 @@ const interaction: Interaction = {
 		}
 		//await embedRepo.save(embed);
 
+		if (interaction.isMessageComponent() && interaction.message instanceof Message){
+			interaction.message.deletable ? await interaction.message.delete() : null;
+		}
+
 		return interaction.channel.send({
 			embeds: [
 				new MessageEmbed()
