@@ -32,8 +32,8 @@ export default class GuildVerify {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
-		default: "white_check_mark",
+		length: "255",
+		default: "",
 	})
 		emoji?: string;
 

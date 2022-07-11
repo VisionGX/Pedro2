@@ -7,10 +7,15 @@ import GuildMessageEmbed from "./MessageEmbed";
 export default class MessageEmbedField {
 	@PrimaryGeneratedColumn()
 		id!: number;
-	@Column()
+	@Column({
+		type: "varchar",
+		length: 255,
+	})
 		title!: string;
 	
-	@Column()
+	@Column({
+		type: "text",
+	})
 		value!: string;
 
 	@ManyToOne(() => GuildMessageEmbed, embed => embed.fields)

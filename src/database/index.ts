@@ -1,7 +1,6 @@
 import { DataSource } from "typeorm";
 import { DatabaseConfig } from "../types/Config";
 import { Log } from "../util/Logger";
-
 class SPDatabase {
 	private logger!: Log.Logger;
 	private static instance: SPDatabase | null = null;
@@ -24,6 +23,7 @@ class SPDatabase {
 			entities: [
 				__dirname + "/../database/models/*.js",
 			],
+			charset:  dbconfig.type === "sqlite" ? undefined : "utf8mb4",
 		});
 		SPDatabase.instance = this;
 	}

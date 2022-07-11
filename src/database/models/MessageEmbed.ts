@@ -9,35 +9,66 @@ export default class GuildMessageEmbed {
 
 	@Column({
 		unique: true,
+		type: "varchar",
+		length: 255,
 	})
 		name!: string;
 
-	@Column({ nullable: true })
-		description?: string;
-
-	@Column({ nullable: true })
-		imageURL?: string;
-
-	@Column({ nullable: true })
-		thumbnailURL?: string;
-
-	@Column({ nullable: true })
-		footer?: string;
-
-	@Column({ nullable: true })
-		footerURL?: string;
-
-	@Column({ nullable: true })
+	@Column({ 
+		nullable: true,
+		type: "varchar",
+		length: 255,
+	})
 		title?: string;
 
-	@Column({ nullable: true })
+	@Column({
+		nullable: true,
+		type: "text",
+	})
 		titleURL?: string;
 
-	@Column({ nullable: true })
+	@Column({ 
+		nullable: true,
+		type: "varchar",
+		length: 255,
+	})
 		author?: string;
 
-	@Column({ nullable: true })
+	@Column({
+		nullable: true,
+		type: "text",
+	})
 		authorURL?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
+	})
+		description?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
+	})
+		imageURL?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
+	})
+		thumbnailURL?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
+	})
+		footer?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
+	})
+		footerURL?: string;
 
 	@Column({ nullable: true })
 		color?: string;
