@@ -1,6 +1,5 @@
 import { ApplicationCommandOption, CommandInteraction, ContextMenuInteraction, Message } from "discord.js";
 import Bot from "../Bot";
-import GuildData from "../database/models/GuildData";
 
 interface Command {
 	name: string;
@@ -18,5 +17,9 @@ interface Interaction {
 	execute<T = CommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
 	execute<T = ContextMenuInteraction>(client: Bot, interaction: T):Promise<unknown>;
 }
+interface APIFunction {
+	name: string;
+	execute(client:Bot, req:Express.Request, res:Express.Response): Promise<unknown>;
+}
 
-export { Command, Interaction };
+export { Command, Interaction, APIFunction };

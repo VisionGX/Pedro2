@@ -10,6 +10,8 @@ type BotConfig = {
 
 	// Database
 	database: DatabaseConfig;
+	// API
+	api: APIConfig;
 };
 type DatabaseConfig = {
 	type: "sqlite" | "mysql";
@@ -21,5 +23,9 @@ type DatabaseConfig = {
 
 	verbose: boolean;
 	sync: boolean;
+};
+type APIConfig = {
+	password: string;
+	port: number;
 };
 export { BotConfig, DatabaseConfig };
