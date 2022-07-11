@@ -15,6 +15,11 @@ export default async (client: Bot, message: Message) => {
 	if (!commandName) return;
 	const command = client.commands.get(commandName);
 	if (!command) return;
+	try {
 
-	command.execute(client, message, args);
+		command.execute(client, message, args);
+
+	} catch (e) {
+		client.logger.error("", e);
+	}
 };

@@ -3,7 +3,7 @@ import Bot from "../../Bot";
 
 export default async (client: Bot, interaction:Interaction) => {
 	
-	if(interaction.isButton()) return client.emit(interaction.customId, interaction);
+	if(interaction.isButton()) return client.emit(interaction.customId.split("|")[0], interaction);
 
 	let inter = null;
 	if(interaction.isSelectMenu()) {
@@ -15,9 +15,6 @@ export default async (client: Bot, interaction:Interaction) => {
 		if(!inter) client.logger.warn(`No interaction found for Command ${interaction.commandName}`);
 	}
 	if(!inter) return;
-	if(interaction.isRepliable()){
-		//await interaction.deferReply();
-	}
 	try{
 		await inter.execute(client, interaction);
 	}catch(e){
