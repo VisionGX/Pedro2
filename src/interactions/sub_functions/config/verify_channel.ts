@@ -3,6 +3,7 @@ import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
 
+
 const interaction: Interaction = {
 	name: "verify channel",
 	type: "SUB_FUNCTION",

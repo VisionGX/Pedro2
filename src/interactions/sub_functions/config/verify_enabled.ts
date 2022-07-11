@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "verify enabled",
 	type: "SUB_FUNCTION",
-	description: "Configure the welcome message enabled.",
+	description: "Configure the verify message enabled.",
 	category: "config",
 	internal_category: "sub",
 	async execute(client: Bot, interaction: CommandInteraction) {
