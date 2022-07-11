@@ -1,0 +1,70 @@
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import Bot from "../../Bot";
+import GuildSuggest from "../../database/models/GuildSuggest";
+import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { Interaction } from "../../types/Executors";
+const notEnabledEmbed = new MessageEmbed()
+	.setTitle("Suggestions are not enabled in this server.")
+	.setDescription("Administrators can enable them with `config suggestions`.");
+const interaction: Interaction = {
+	name: "suggestion",
+	type: "CHAT_INPUT",
+	description: "Make a Suggestion for the Server!",
+	category: "other",
+	internal_category: "app",
+	options: [
+		{
+			name: "suggestion",
+			description: "Make a Suggestion for the Server!",
+			type: "STRING",
+			required: true,
+		}
+	],
+	async execute(client: Bot, interaction: CommandInteraction) {
+		if (interaction.user.bot) return interaction.reply("A bot can't make a suggestion!");
+		const guildSuggestRepo = client.database.source.getRepository(GuildSuggest);
+		const guildSuggest = await guildSuggestRepo.findOne({
+			where: {
+				guildId: `${interaction.guild?.id}`,
+			},
+		});
+		if (!guildSuggest) return interaction.reply({
+			embeds: [
+				notEnabledEmbed.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+		if (!guildSuggest.enabled) return interaction.reply({
+			embeds: [
+				notEnabledEmbed.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+		const suggestion = interaction.options.getString("suggestion");
+		const guildSuggestion = new GuildSuggestion();
+		guildSuggestion.value = `${suggestion}`;
+		guildSuggestion.author = `${interaction.user.id}`;
+		guildSuggestion.config = guildSuggest;
+
+		//guildSuggest.suggestions.push(guildSuggestion);
+		//await guildSuggestRepo.save(guildSuggest);
+
+		client.emit("suggestion", guildSuggestion);
+
+		await interaction.reply({
+			embeds: [
+				new MessageEmbed()
+					.setTitle("Suggestion Submitted!")
+					.setDescription(`${suggestion}`)
+					.setFooter({
+						text: `It will be reviewed by staff and you may see it pop up in <#${guildSuggest.publicChannel}>`,
+					})
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+
+
+	}
+};
+export default interaction;
