@@ -25,6 +25,11 @@ module.exports = {
 		verbose: false,
 		sync: true,
 	},
+	// API
+	api: {
+		password: "API Password",
+		port: 8080,
+	},
 	// Logging
 	logging: {
 		enabled: false,
