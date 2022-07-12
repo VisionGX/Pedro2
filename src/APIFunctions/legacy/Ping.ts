@@ -1,7 +1,7 @@
 import Express from "express";
-import { Req } from "../API";
-import Bot from "../Bot";
-import { APIFunction } from "../types/Executors";
+import { Req } from "../../API";
+import Bot from "../../Bot";
+import { APIFunction } from "../../types/Executors";
 const fn: APIFunction = {
 	name: "Chat",
 	async execute(_client: Bot, req: Req<unknown>, res: Express.Response) {
