@@ -1,7 +1,7 @@
 {
-	"name": "utilitydust",
-	"version": "1.3.2",
-	"description": "A customizable Discord general-purpose bot, written in TypeScript",
+	"name": "fzstbot",
+	"version": "1.2.8",
+	"description": "A custom Discord specific-purpose bot, written in TypeScript, for the Fzst Discord Server.",
 	"main": "dist/index.js",
 	"engines": {
 		"node": ">=17.x"
