@@ -1,5 +1,9 @@
 import Captcha from "@haileybot/captcha-generator";
+<<<<<<< HEAD
 import { ButtonInteraction, GuildMember, Message, MessageAttachment, EmbedBuilder } from "discord.js";
+=======
+import { ButtonInteraction, GuildMember, Message, MessageAttachment, MessageEmbed } from "discord.js";
+>>>>>>> d609a18... Captcha Enabled
 import Bot from "../../Bot";
 import GuildVerify from "../../database/models/GuildVerify";
 import { EventExecutor } from "../../types/Executors";
