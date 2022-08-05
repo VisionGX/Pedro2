@@ -1,4 +1,5 @@
-import { ButtonInteraction, GuildMember, MessageEmbed } from "discord.js";
+import Captcha from "@haileybot/captcha-generator";
+import { ButtonInteraction, GuildMember, Message, MessageAttachment, MessageEmbed } from "discord.js";
 import Bot from "../../Bot";
 import GuildVerify from "../../database/models/GuildVerify";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,9 +33,9 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		});
 
 		//Next line only enabled when captcha is not enabled
-		interaction.deferUpdate();
+		//interaction.deferUpdate();
 
-		/* const captcha = new Captcha();
+		const captcha = new Captcha();
 		const attach = new MessageAttachment(captcha.JPEGStream, "captcha.jpeg");
 		const message = await interaction.member.send({
 			embeds: [
@@ -69,12 +70,15 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 			],
 		}).catch(() => {
 			client.logger.warn(`Failed to notice ${interaction.user.tag} about verification timeout`);
-		}); */
-		//if (msg.content.toUpperCase() === captcha.value) {
-		await interaction.member.roles.add(verify.verifyRole);
-		client.logger.info(`${interaction.user.tag} has been verified`);
-		//}
-		//await message.delete();
+		});
+		// Next line must be enabled when captcha is enabled
+		if (msg.content.toUpperCase() === captcha.value) {
+			// Next line must be enabled also when captcha is NOT enabled
+			await interaction.member.roles.add(verify.verifyRole);
+			client.logger.info(`${interaction.user.tag} has been verified`);
+		}
+		// Next line must be enabled when captcha is enabled
+		await message.delete();
 	} catch (e) {
 		client.logger.error("Error in buttonVerify.ts", e);
 	}
