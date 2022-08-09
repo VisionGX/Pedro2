@@ -5,7 +5,7 @@ import GuildMessageEmbed from "./MessageEmbed";
 export default class GuildVerify {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
@@ -17,7 +17,7 @@ export default class GuildVerify {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		channel?: string;
 
@@ -40,7 +40,7 @@ export default class GuildVerify {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		verifyRole?: string;
 

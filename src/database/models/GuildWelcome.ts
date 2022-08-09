@@ -5,7 +5,7 @@ import GuildMessageEmbed from "./MessageEmbed";
 export default class GuildWelcome {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
@@ -17,7 +17,7 @@ export default class GuildWelcome {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		channel?: string;
 

@@ -5,7 +5,7 @@ import GuildSuggestion from "./GuildSuggestion";
 export default class GuildSuggest {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
@@ -17,14 +17,14 @@ export default class GuildSuggest {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		publicChannel?: string;
 
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		privateChannel?: string;
 
