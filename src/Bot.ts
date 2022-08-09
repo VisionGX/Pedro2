@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Client, Collection, Intents } from "discord.js";
-import { APIFunction, Command, Interaction } from "./types/Executors";
+import { APIFunction, Command, Interaction, Job } from "./types/Executors";
 import * as fs from "fs";
+import Schedule from "node-schedule";
 import SPDatabase from "./database";
 import { Log } from "./util/Logger";
 import { BotConfig } from "./types/Config";
@@ -13,6 +14,7 @@ class Bot extends Client {
 	commands: Collection<string, Command>;
 	interactions: Collection<string, Interaction>;
 	apiFunctions: Collection<string, APIFunction>;
+	jobs: Collection<string, Job>;
 	database: SPDatabase;
 	server: API;
 	constructor() {
@@ -40,6 +42,7 @@ class Bot extends Client {
 		this.commands = new Collection();
 		this.interactions = new Collection();
 		this.apiFunctions = new Collection();
+		this.jobs = new Collection();
 		this.config = require("../config");
 		this.database = new SPDatabase(this.config.database);
 		this.server = new API(this);
@@ -98,13 +101,27 @@ class Bot extends Client {
 			});
 		});
 	}
+	async loadJobs() {
+		fs.readdirSync(`${__dirname}/jobs`).forEach(file => {
+			const job: Job = require(`./jobs/${file}`).default;
+			this.logger.info(`Loading Job ${file}`);
+			this.jobs.set(job.name, job);
+		});
+	}
+	async startJobs() {
+		this.jobs.forEach(job => {
+			Schedule.scheduleJob(job.name, job.cronInterval, job.task.bind(null, this));
+		});
+	}
 	async start() {
 		await this.database.init();
 		await this.registerEvents();
 		await this.loadCommands();
 		await this.loadInteractions();
 		await this.loadAPIFunctions();
+		await this.loadJobs();
 		await this.login(this.config.token);
+		await this.startJobs();
 	}
 }
 export default Bot;
