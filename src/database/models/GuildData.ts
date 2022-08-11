@@ -8,19 +8,19 @@ import GuildMessageEmbed from "./MessageEmbed";
 export default class GuildData {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
 	@Column({
 		type: "varchar",
-		length: "18",
+		length: "20",
 		nullable: true,
 	})
 		museumId?: string;
 	@Column({
 		type: "varchar",
-		length: "18",
+		length: "20",
 		nullable: true,
 	})
 		confessionsId?: string;

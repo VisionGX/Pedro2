@@ -19,7 +19,7 @@ export default {
 			}
 		}
 		attachments = attachments.length > 0 ? attachments : undefined;
-		const channelIdRegex = /<#[0-9]{18}>/g;
+		const channelIdRegex = /<#[0-9]{18,20}>/g;
 		const channelId = args[0];
 		if (channelIdRegex.test(channelId)) {
 			const channel = await client.channels.fetch(channelId.replace(/[<#>]/g, ""));

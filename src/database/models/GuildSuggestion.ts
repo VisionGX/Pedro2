@@ -13,14 +13,14 @@ export default class GuildSuggestion {
 
 	@Column({
 		type: "varchar",
-		length: 18,
+		length: 20,
 	})
 		author!: string;
 
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: 18,
+		length: 20,
 	})
 		activeMessageId?: string;
 
