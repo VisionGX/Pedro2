@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Client, Collection, Intents } from "discord.js";
-import { APIFunction, Command, Interaction, Job } from "./types/Executors";
+import { Command, Interaction, Job } from "./types/Executors";
 import * as fs from "fs";
 import Schedule from "node-schedule";
 import SPDatabase from "./database";
@@ -13,7 +13,6 @@ class Bot extends Client {
 	config: BotConfig;
 	commands: Collection<string, Command>;
 	interactions: Collection<string, Interaction>;
-	apiFunctions: Collection<string, APIFunction>;
 	jobs: Collection<string, Job>;
 	database: SPDatabase;
 	server: API;
@@ -41,7 +40,6 @@ class Bot extends Client {
 		this.logger = new Log.Logger();
 		this.commands = new Collection();
 		this.interactions = new Collection();
-		this.apiFunctions = new Collection();
 		this.jobs = new Collection();
 		this.config = require("../config");
 		this.database = new SPDatabase(this.config.database);
@@ -83,24 +81,6 @@ class Bot extends Client {
 			});
 		});
 	}
-	async loadAPIFunctions() {
-		fs.readdirSync(`${__dirname}/APIFunctions`).forEach(dir => {
-			const functions = fs.readdirSync(`${__dirname}/APIFunctions/${dir}`).filter(file => file.endsWith(".js"));
-			functions.forEach(file => {
-				const apiFunction: APIFunction = require(`./APIFunctions/${dir}/${file}`).default;
-				this.logger.info(`Loading API Function ${file}`);
-				this.apiFunctions.set(apiFunction.name.replace(/\s/g, "_"), apiFunction);
-			});
-			fs.readdirSync(`${__dirname}/APIFunctions/${dir}`).filter(file => !file.endsWith(".js")).forEach(subdir => {
-				const subFunctions = fs.readdirSync(`${__dirname}/APIFunctions/${dir}/${subdir}`).filter(file => file.endsWith(".js"));
-				subFunctions.forEach(file => {
-					const apiFunction: APIFunction = require(`./APIFunctions/${dir}/${subdir}/${file}`).default;
-					this.logger.info(`Loading API Function ${file}`);
-					this.apiFunctions.set(apiFunction.name.replace(/\s/g, "_"), apiFunction);
-				});
-			});
-		});
-	}
 	async loadJobs() {
 		fs.readdirSync(`${__dirname}/jobs`).forEach(file => {
 			const job: Job = require(`./jobs/${file}`).default;
@@ -118,7 +98,6 @@ class Bot extends Client {
 		await this.registerEvents();
 		await this.loadCommands();
 		await this.loadInteractions();
-		await this.loadAPIFunctions();
 		await this.loadJobs();
 		await this.login(this.config.token);
 		await this.startJobs();
