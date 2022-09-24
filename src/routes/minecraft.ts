@@ -4,10 +4,11 @@ import { Req } from "../API";
 import Bot from "../Bot";
 import MinecraftData from "../database/models/MinecraftData";
 import MinecraftPlayer from "../database/models/MinecraftPlayer";
+import MinecraftServer from "../database/models/MinecraftServer";
 import { ServerRequest } from "../types/API";
 import { EventInfo, PlayerInfo, RequestContainer, ServerInfo, ServerPlayerStats } from "../types/MinecraftPaperAPI";
 export default {
-	async get(req: ServerRequest, res: Response) {
+	async post(req: ServerRequest, res: Response) {
 		const { parentApp: client } = req;
 		if (!req.headers.authorization) {
 			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
@@ -31,16 +32,17 @@ interface PlayerLeaveArgs { player: PlayerInfo, server: ServerPlayerStats, event
 const functions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
 	// PlayerJoin Handler
 	async PlayerJoin(client: Bot, req: Req<RequestContainer<PlayerJoinArgs>>, res: Response) {
-		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData = await mcDataRepo.findOne({
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcServer = await mcServerRepo.findOne({
 			where: {
-				serverName: req.body.id,
+				identifier: req.body.id,
 			},
+			relations: ["data"],
 		});
-		if (!mcData) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
-		if (!mcData.log || !mcData.log.enabled) return;
+		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
+		if (!mcServer.data.log || !mcServer.data.log.enabled) return;
 
-		const channel = await client.channels.fetch(`${mcData.log.channelId}`);
+		const channel = await client.channels.fetch(`${mcServer.data.log.channelId}`);
 		if (!channel || !channel.isText()) return;
 
 		const { args, content } = req.body;
@@ -67,16 +69,17 @@ const functions: { [key: string]: (client: Bot, req: ServerRequest, res: Respons
 	},
 	// PlayerLeave Handler
 	async PlayerLeave(client: Bot, req: Req<RequestContainer<PlayerLeaveArgs>>, res: Response) {
-		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData = await mcDataRepo.findOne({
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcServer = await mcServerRepo.findOne({
 			where: {
-				serverName: req.body.id,
+				identifier: req.body.id,
 			},
+			relations: ["data"],
 		});
-		if (!mcData) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
-		if (!mcData.log || !mcData.log.enabled) return;
+		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
+		if (!mcServer.data.log || !mcServer.data.log.enabled) return;
 
-		const channel = await client.channels.fetch(`${mcData.log.channelId}`);
+		const channel = await client.channels.fetch(`${mcServer.data.log.channelId}`);
 		if (!channel || !channel.isText()) return;
 
 		const { args, content } = req.body;
@@ -103,16 +106,17 @@ const functions: { [key: string]: (client: Bot, req: ServerRequest, res: Respons
 	},
 	// Log Handler
 	async Log(client: Bot, req: Req<RequestContainer<ServerInfo>>, res: Response) {
-		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData = await mcDataRepo.findOne({
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcServer = await mcServerRepo.findOne({
 			where: {
-				serverName: req.body.id,
+				identifier: req.body.id,
 			},
+			relations: ["data"],
 		});
-		if (!mcData) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
-		if (!mcData.log || !mcData.log.enabled) return;
+		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
+		if (!mcServer.data.log || !mcServer.data.log.enabled) return;
 
-		const channel = await client.channels.fetch(`${mcData.log.channelId}`);
+		const channel = await client.channels.fetch(`${mcServer.data.log.channelId}`);
 		if (!channel || !channel.isText()) return;
 
 		const { args, content } = req.body;
@@ -138,15 +142,16 @@ const functions: { [key: string]: (client: Bot, req: ServerRequest, res: Respons
 	},
 	// Auth handler
 	async Auth(client: Bot, req: Req<RequestContainer<PlayerAuthArgs>>, res: Response) {
-		const mcDataRepo = client.database.source.getRepository(MinecraftData);
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
 		const mcUserRepo = client.database.source.getRepository(MinecraftPlayer);
-		const mcData = await mcDataRepo.findOne({
+		const mcServer = await mcServerRepo.findOne({
 			where: {
-				serverName: req.body.id,
+				identifier: req.body.id,
 			},
+			relations: ["data"],
 		});
-		if (!mcData) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
-		const users = mcData.players;
+		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server name!" });
+		const users = mcServer.players;
 		const user = users.find(p => p.name === req.body.args.player.name);
 		if (!user) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
 		if (user.uuid && user.uuid !== req.body.args.player.uuid) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
@@ -158,7 +163,7 @@ const functions: { [key: string]: (client: Bot, req: ServerRequest, res: Respons
 		user.enabled = lastIp === newIP;
 		await mcUserRepo.save(user);
 
-		const guild = await client.guilds.fetch(mcData.guildId)
+		const guild = await client.guilds.fetch(mcServer.data.guildId)
 			.catch(() => null);
 		if (!guild) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Guild not found!" });
 		const member = await guild.members.fetch(user.userId)

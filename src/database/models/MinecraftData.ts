@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import MinecraftLog from "./MinecraftLog";
 import MinecraftPlayer from "./MinecraftPlayer";
+import MinecraftServer from "./MinecraftServer";
 
 @Entity()
 export default class MinecraftData {
@@ -13,13 +14,6 @@ export default class MinecraftData {
 	@Column()
 		enabled!: boolean;
 
-	@Column({
-		unique: true,
-		type:"tinytext",
-	})
-		serverName!: string;
-
-
 	@OneToOne(() => MinecraftLog,{
 		nullable: true,
 		eager: true,
@@ -27,8 +21,16 @@ export default class MinecraftData {
 	@JoinColumn()
 		log?: MinecraftLog;
 
+	@OneToMany(() => MinecraftServer, server => server.data,{
+		eager: true,
+		nullable: true,
+	})
+	@JoinColumn()
+		servers!: MinecraftServer[];
+
 	@OneToMany(() => MinecraftPlayer, player => player.data,{
 		eager: true,
+		nullable: true,
 	})
 	@JoinColumn()
 		players!: MinecraftPlayer[];
