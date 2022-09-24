@@ -11,8 +11,8 @@ const interaction: Interaction = {
 	internal_category: "sub",
 	async execute(client: Bot, interaction: CommandInteraction) {
 		const guildDataRepo = client.database.source.getRepository(GuildData);
-		const guildData = await guildDataRepo.findOne({ where: { guildId:`${interaction.guildId}` } });
-		if(!guildData) return interaction.reply({
+		const guildData = await guildDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
+		if (!guildData) return interaction.reply({
 			embeds: [
 				new MessageEmbed()
 					.setTitle("Guild Data not initialized")
@@ -22,21 +22,20 @@ const interaction: Interaction = {
 		});
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
 		const enabled = interaction.options.getBoolean("status") || false;
-		const serverName = interaction.options.getString("server_name");
-		if(enabled && !serverName) return interaction.reply({
+		/* if (enabled && !serverName) return interaction.reply({
 			embeds: [
 				new MessageEmbed()
 					.setTitle("Missing server name")
 					.setDescription("Please provide a server name.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
-		});
+		}); */
 		const mcData = await mcDataRepo.findOne({ where: { guildId: guildData.guildId } });
 		if (mcData) {
-			await mcDataRepo.save({ ...mcData, enabled: enabled ? enabled : false, serverName: serverName ? serverName : "not_provided" });
+			await mcDataRepo.save({ ...mcData, enabled: enabled ? enabled : false });
 		} else {
 			const guildRepo = client.database.source.getRepository(GuildData);
-			const newMcData = mcDataRepo.create({ guildId: `${guildData.guildId}`, enabled, serverName: serverName ? serverName : "not_provided" });
+			const newMcData = mcDataRepo.create({ guildId: `${guildData.guildId}`, });
 			await mcDataRepo.save(newMcData);
 			await guildRepo.save({ ...guildData, verify: newMcData });
 		}
