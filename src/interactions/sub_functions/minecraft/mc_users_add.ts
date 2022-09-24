@@ -5,7 +5,7 @@ import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
-	name: "mc user add",
+	name: "mc users add",
 	type: "SUB_FUNCTION",
 	description: "Add a Minecraft User to the registry.",
 	category: "config",

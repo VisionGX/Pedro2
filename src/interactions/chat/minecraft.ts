@@ -11,7 +11,7 @@ const interaction: Interaction = {
 	internal_category: "guild",
 	options: [
 		{
-			name: "user",
+			name: "users",
 			description: "User Management",
 			type: "SUB_COMMAND_GROUP",
 			options: [
@@ -56,6 +56,96 @@ const interaction: Interaction = {
 							name: "page",
 							description: "The page to list.",
 							type: "NUMBER",
+							required: true,
+						},
+					]
+				},
+			],
+		},
+		{
+			name: "servers",
+			description: "Server Management",
+			type: "SUB_COMMAND_GROUP",
+			options: [
+				{
+					name: "create",
+					description: "Add a user to the database.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name:"identifier",
+							description: "The PaperAPI identifier.",
+							type: "USER",
+							required: true,
+						},
+						{
+							name: "name",
+							description: "A short recognizable name.",
+							type: "STRING",
+							required: true,
+						},
+					]
+				},
+				{
+					name: "delete",
+					description: "Remove a Server from the database.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "name",
+							description: "The name of ther server to delete.",
+							type: "USER",
+							required: true,
+						},
+					]
+				},
+				{
+					name: "list",
+					description: "List all Servers in the database.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "page",
+							description: "The page to list.",
+							type: "NUMBER",
+							required: true,
+						},
+					]
+				},
+				{
+					name: "adduser",
+					description: "Add a user to a server.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "server",
+							description: "The server to add the user to.",
+							type: "STRING",
+							required: true,
+						},
+						{
+							name: "user",
+							description: "The user to add to the server.",
+							type: "STRING",
+							required: true,
+						},
+					]
+				},
+				{
+					name: "removeuser",
+					description: "Remove a user from a server.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "server",
+							description: "The server to remove the user from.",
+							type: "STRING",
+							required: true,
+						},
+						{
+							name: "user",
+							description: "The user to remove from the server.",
+							type: "STRING",
 							required: true,
 						},
 					]
