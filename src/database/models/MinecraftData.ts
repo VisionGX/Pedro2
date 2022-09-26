@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import MinecraftLog from "./MinecraftLog";
 import MinecraftPlayer from "./MinecraftPlayer";
 import MinecraftServer from "./MinecraftServer";
@@ -7,7 +7,7 @@ import MinecraftServer from "./MinecraftServer";
 export default class MinecraftData {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
@@ -15,23 +15,15 @@ export default class MinecraftData {
 		enabled!: boolean;
 
 	@OneToOne(() => MinecraftLog,{
-		nullable: true,
+		cascade: true,
 		eager: true,
 	})
 	@JoinColumn()
 		log?: MinecraftLog;
 
-	@OneToMany(() => MinecraftServer, server => server.data,{
-		eager: true,
-		nullable: true,
-	})
-	@JoinColumn()
-		servers!: MinecraftServer[];
+	@OneToMany(() => MinecraftServer, server => server.data)
+		servers?: MinecraftServer[];
 
-	@OneToMany(() => MinecraftPlayer, player => player.data,{
-		eager: true,
-		nullable: true,
-	})
-	@JoinColumn()
-		players!: MinecraftPlayer[];
+	@OneToMany(() => MinecraftPlayer, player => player.data)
+		players?: MinecraftPlayer[];
 }

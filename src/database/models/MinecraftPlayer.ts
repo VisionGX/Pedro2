@@ -1,33 +1,40 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import MinecraftData from "./MinecraftData";
+import MinecraftServer from "./MinecraftServer";
+import MinecraftServerPlayer from "./MinecraftServerPlayer";
 
 @Entity()
 export default class MinecraftPlayer {
 	@PrimaryGeneratedColumn()
 		id!: number;
 
-
 	@Column({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		userId!: string;
 	@Column({
 		unique: true,
-		type: "tinytext"
+		type: "text"
 	})
 		name!: string;
 
 	@Column({
 		unique: true,
 		nullable: true,
-		type: "tinytext"
+		type: "text",
 	})
 		uuid?: string;
 
 	@Column({
 		nullable: true,
-		type: "tinytext"
+		type: "text"
+	})
+		type?: string;
+
+	@Column({
+		nullable: true,
+		type: "text",
 	})
 		lastIp?: string;
 
@@ -36,6 +43,15 @@ export default class MinecraftPlayer {
 	})
 		enabled!: boolean;
 
-	@ManyToOne(() => MinecraftData, data => data.players)
+	@ManyToOne(() => MinecraftData, data => data.players,{
+		eager: true,
+		cascade: true,
+	})
 		data!: MinecraftData;
+
+	@OneToMany(() => MinecraftServerPlayer, serverplayer => serverplayer.player,{
+		eager:true,
+		cascade:true
+	})
+		servers!: MinecraftServerPlayer[];
 }
