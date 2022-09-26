@@ -39,4 +39,8 @@ interface ServerPlayerStats {
 	max: number;
 }
 
-export { RequestContainer,ServerInfo, PlayerInfo, EventInfo, ServerStats, ServerPlayerStats };
+interface PlayerAuthArgs { player: PlayerInfo }
+interface PlayerJoinArgs { player: PlayerInfo, server: ServerPlayerStats, event: EventInfo }
+interface PlayerLeaveArgs { player: PlayerInfo, server: ServerPlayerStats, event: EventInfo }
+
+export { RequestContainer,ServerInfo, PlayerInfo, EventInfo, ServerStats, ServerPlayerStats, PlayerAuthArgs, PlayerJoinArgs, PlayerLeaveArgs };
