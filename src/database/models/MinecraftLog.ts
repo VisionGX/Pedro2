@@ -1,11 +1,11 @@
-import { Column, Entity, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import MinecraftData from "./MinecraftData";
 
 @Entity()
 export default class MinecraftLog {
 	@PrimaryColumn({
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		guildId!: string;
 
@@ -15,11 +15,12 @@ export default class MinecraftLog {
 	@Column({
 		nullable: true,
 		type: "varchar",
-		length: "18",
+		length: "20",
 	})
 		channelId?: string;
 
-
-	@OneToOne(() => MinecraftData)
+	@OneToOne(() => MinecraftData, data => data.log,{
+		nullable: false,
+	})
 		data!: MinecraftData;
 }
