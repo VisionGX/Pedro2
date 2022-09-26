@@ -1,35 +1,35 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
-import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
+import MinecraftServer from "../../../database/models/MinecraftServer";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
-	name: "mc users add",
+	name: "mc servers create",
 	type: "SUB_FUNCTION",
-	description: "Add a Minecraft User to the registry.",
+	description: "Create a Minecraft Server.",
 	category: "config",
 	internal_category: "sub",
 	async execute(client: Bot, interaction: CommandInteraction) {
-		const discord_user = interaction.options.getUser("discord_user");
-		const username = interaction.options.getString("username");
+		const identifier = interaction.options.getString("identifier");
+		const name = interaction.options.getString("name");
 
-		if(!discord_user) {
+		if(!identifier) {
 			interaction.reply({
 				embeds: [
 					new MessageEmbed()
 						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must provide a discord user."),
+						.setDescription("You must provide an identifier."),
 				],
 			});
 			return;
 		}
-		if(!username) {
+		if(!name) {
 			interaction.reply({
 				embeds: [
 					new MessageEmbed()
 						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must provide a username."),
+						.setDescription("You must provide a name."),
 				],
 			});
 			return;
@@ -46,40 +46,41 @@ const interaction: Interaction = {
 			});
 			return;
 		}
-		const mcUserRepo = client.database.source.getRepository(MinecraftPlayer);
-		const mcUser = await mcUserRepo.findOne({
-			where: {
-				userId: `${discord_user.id}`,
-			},
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcServer = await mcServerRepo.findOne({
+			where: [
+				{ identifier: identifier },
+				{ serverName: name },
+			]
 		});
-		if (mcUser) {
+		if (mcServer) {
 			interaction.reply({
 				embeds: [
 					new MessageEmbed()
 						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setTitle("User already exists.")
+						.setTitle("Server already exists.")
 						.setDescription(
-							`${discord_user} is already registered to Minecraft. \nAs ${mcUser.name}`
+							`A server with the identifier ${identifier} or name ${name} already exists.`
 						),
 				],
 			});
 			return;
 		}
-		await mcUserRepo.save({
-			userId: discord_user.id,
-			name: username,
+		const newServer = await mcServerRepo.save({
+			identifier: identifier,
+			serverName: name,
 			data: mcData,
 		});
 		interaction.reply({
 			embeds: [
 				new MessageEmbed()
 					.setColor(`#${client.config.defaultEmbedColor}`)
-					.setTitle("User added.")
+					.setTitle("Server created.")
 					.setDescription(
-						`${discord_user} has been added to Minecraft as ${username}.`
+						`A server with the identifier ${newServer.identifier} and name ${newServer.serverName} has been created.`
 					),
 			],
-		});	
+		});
 	}
 };
 export default interaction;
