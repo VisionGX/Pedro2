@@ -32,6 +32,22 @@ const interaction: Interaction = {
 							type: "STRING",
 							required: true,
 						},
+						{
+							name: "type",
+							description: "The type of user to add.",
+							type: "STRING",
+							choices: [
+								{
+									name: "Admin",
+									value: "admin",
+								},
+								{
+									name: "User",
+									value: "user",
+								},
+							],
+							required: true,
+						}
 					]
 				},
 				{
@@ -55,7 +71,7 @@ const interaction: Interaction = {
 						{
 							name: "page",
 							description: "The page to list.",
-							type: "NUMBER",
+							type: "INTEGER",
 							required: true,
 						},
 					]
@@ -75,7 +91,7 @@ const interaction: Interaction = {
 						{
 							name:"identifier",
 							description: "The PaperAPI identifier.",
-							type: "USER",
+							type: "STRING",
 							required: true,
 						},
 						{
@@ -107,7 +123,7 @@ const interaction: Interaction = {
 						{
 							name: "page",
 							description: "The page to list.",
-							type: "NUMBER",
+							type: "INTEGER",
 							required: true,
 						},
 					]
@@ -118,7 +134,7 @@ const interaction: Interaction = {
 					type: "SUB_COMMAND",
 					options: [
 						{
-							name: "server",
+							name: "name",
 							description: "The server to add the user to.",
 							type: "STRING",
 							required: true,
@@ -126,7 +142,7 @@ const interaction: Interaction = {
 						{
 							name: "user",
 							description: "The user to add to the server.",
-							type: "STRING",
+							type: "USER",
 							required: true,
 						},
 					]
@@ -137,7 +153,7 @@ const interaction: Interaction = {
 					type: "SUB_COMMAND",
 					options: [
 						{
-							name: "server",
+							name: "name",
 							description: "The server to remove the user from.",
 							type: "STRING",
 							required: true,
@@ -145,7 +161,26 @@ const interaction: Interaction = {
 						{
 							name: "user",
 							description: "The user to remove from the server.",
+							type: "USER",
+							required: true,
+						},
+					]
+				},
+				{
+					name: "listusers",
+					description: "List all users in a server.",
+					type: "SUB_COMMAND",
+					options: [
+						{
+							name: "name",
+							description: "The server to list users from.",
 							type: "STRING",
+							required: true,
+						},
+						{
+							name: "page",
+							description: "The page to list.",
+							type: "INTEGER",
 							required: true,
 						},
 					]
