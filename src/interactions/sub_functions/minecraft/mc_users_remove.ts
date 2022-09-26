@@ -41,9 +41,7 @@ const interaction: Interaction = {
 			});
 			return;
 		}
-		await mcUserRepo.remove(mcUser,{
-			cascade: true,
-		});
+		await mcUserRepo.remove(mcUser);
 		interaction.reply({
 			embeds: [
 				new MessageEmbed()
