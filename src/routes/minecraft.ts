@@ -9,18 +9,20 @@ import { PlayerAuthArgs, PlayerJoinArgs, PlayerLeaveArgs, RequestContainer, Serv
 export default {
 	async get(req:ServerRequest, res:Response) {
 		const { parentApp: client } = req;
+		
 		if (!req.headers.authorization) {
 			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
 		}
 		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-
+		// DEBUG
+		console.log(req.body);
 		const { content_type } = req.body;
 		const fn = getFunctions[content_type];
 		if (!fn) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid content type!" });
 		try {
 			fn(client, req, res);
 		} catch (e) {
-			client.logger.error("Error while executing POST API function!", e);
+			client.logger.error("Error while executing GET API function!", e);
 		}
 	},
 	async post(req: ServerRequest, res: Response) {
