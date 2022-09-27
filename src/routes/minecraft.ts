@@ -9,6 +9,8 @@ import { PlayerAuthArgs, PlayerJoinArgs, PlayerLeaveArgs, RequestContainer, Serv
 export default {
 	async get(req:ServerRequest, res:Response) {
 		const { parentApp: client } = req;
+		// DEBUG
+		client.logger.debug(req.body);
 		
 		if (!req.headers.authorization) {
 			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
