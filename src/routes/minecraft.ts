@@ -11,9 +11,9 @@ export default {
 		const { parentApp: client } = req;
 		
 		if (!req.headers.authorization) {
-			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
+			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid authorization!" });
 		}
-		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
+		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid authorization!" });
 
 		const { content_type } = req.body;
 		const fn = getFunctions[content_type];
@@ -27,9 +27,9 @@ export default {
 	async post(req: ServerRequest, res: Response) {
 		const { parentApp: client } = req;
 		if (!req.headers.authorization) {
-			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
+			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid authorization!" });
 		}
-		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
+		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid authorization!" });
 
 		const { content_type } = req.body;
 		const fn = postFunctions[content_type];
