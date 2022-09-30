@@ -25,6 +25,7 @@ export default {
 			where: {
 				server: server,
 			},
+			relations: ["player"],
 		});
 		const users = players.map(p => p.player);
 
