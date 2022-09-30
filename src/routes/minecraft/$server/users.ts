@@ -2,6 +2,7 @@ import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 import { Response } from "express";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
 import MinecraftServer from "../../../database/models/MinecraftServer";
+import MinecraftServerPlayer from "../../../database/models/MinecraftServerPlayer";
 import { ServerRequest } from "../../../types/API";
 
 export default {
@@ -13,7 +14,6 @@ export default {
 		}
 		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ err: true, code: 403, message: "Invalid authorization!" });
 
-		const users = await client.database.source.getRepository(MinecraftPlayer).find();
 		const server = await client.database.source.getRepository(MinecraftServer).findOne({
 			where: {
 				identifier: `${req.params.server}`,
@@ -21,10 +21,14 @@ export default {
 		});
 		if (!server) return res.status(404).json({ err: true, code: 404, message: "Invalid server identifier!" });
 		
-		// Match users to server
-		const serverUsers = users.filter(u => u.servers.some(sp => sp.server?.identifier === server.identifier));
-		
-		return res.status(200).json({ err: false, code: 200, message: "Success!", data: serverUsers });
+		const players = await client.database.source.getRepository(MinecraftServerPlayer).find({
+			where: {
+				server: server,
+			},
+		});
+		const users = players.map(p => p.player);
+
+		return res.status(200).json({ err: false, code: 200, message: "Success!", data: users });
 
 		
 	},
