@@ -43,6 +43,9 @@ export default {
 };
 
 const getFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
+	
+};
+const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
 	// Auth handler
 	async Auth(client: Bot, req: Req<RequestContainer<PlayerAuthArgs>>, res: Response) {
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
@@ -142,9 +145,7 @@ const getFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Resp
 			identifier: user.userId,
 		};
 		res.status(200).json({ body: responseBody, err: false, code: 200, message: "User authenticated!" });
-	}
-};
-const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
+	},
 	// PlayerJoin Handler
 	async PlayerJoin(client: Bot, req: Req<RequestContainer<PlayerJoinArgs>>, res: Response) {
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
