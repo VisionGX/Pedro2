@@ -28,6 +28,11 @@ class API {
 			(req as unknown as ServerRequest).parentApp = client;
 			next();
 		});
+		// DEBUG: Log all requests
+		this.server.use((req, _res, next) => {
+			console.log(`${req.method} ${req.path}`);
+			next();
+		});
 
 		this.server.get("/", function (req, res) {
 			return res.send("This is an SpaceProject based API");
