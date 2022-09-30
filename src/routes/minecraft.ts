@@ -9,15 +9,12 @@ import { PlayerAuthArgs, PlayerJoinArgs, PlayerLeaveArgs, RequestContainer, Serv
 export default {
 	async get(req:ServerRequest, res:Response) {
 		const { parentApp: client } = req;
-		// DEBUG
-		client.logger.debug(req.body);
 		
 		if (!req.headers.authorization) {
 			return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
 		}
 		if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-		// DEBUG
-		client.logger.debug(req.body);
+
 		const { content_type } = req.body;
 		const fn = getFunctions[content_type];
 		if (!fn) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid content type!" });
@@ -48,8 +45,6 @@ export default {
 const getFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
 	// Auth handler
 	async Auth(client: Bot, req: Req<RequestContainer<PlayerAuthArgs>>, res: Response) {
-		// DEBUG
-		client.logger.debug(req.body);
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
 		const mcUserRepo = client.database.source.getRepository(MinecraftPlayer);
 		const mcServer = await mcServerRepo.findOne({
