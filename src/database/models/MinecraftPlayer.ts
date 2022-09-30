@@ -31,6 +31,12 @@ export default class MinecraftPlayer {
 		type: "text"
 	})
 		type?: string;
+	
+	@Column({
+		nullable: true,
+		type: "longtext"
+	})
+		customProperties?: string;
 
 	@Column({
 		nullable: true,
