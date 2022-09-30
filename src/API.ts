@@ -31,6 +31,7 @@ class API {
 		// DEBUG: Log all requests
 		this.server.use((req, _res, next) => {
 			console.log(`${req.method} ${req.path}`);
+			console.log(req.body);
 			next();
 		});
 
