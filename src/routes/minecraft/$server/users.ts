@@ -22,7 +22,7 @@ export default {
 		if (!server) return res.status(404).json({ err: true, code: 404, message: "Invalid server identifier!" });
 		
 		// Match users to server
-		const serverUsers = users.filter(u => u.servers.some(sp => sp.server.identifier === server.identifier));
+		const serverUsers = users.filter(u => u.servers.some(sp => sp.server?.identifier === server.identifier));
 		
 		return res.status(200).json({ err: false, code: 200, message: "Success!", data: serverUsers });
 
