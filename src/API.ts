@@ -29,11 +29,11 @@ class API {
 			next();
 		});
 		// DEBUG: Log all requests
-		this.server.use((req, _res, next) => {
+		/* this.server.use((req, _res, next) => {
 			console.log(`${req.method} ${req.path}`);
 			console.log(req.body);
 			next();
-		});
+		}); */
 
 		this.server.get("/", function (req, res) {
 			return res.send("This is an SpaceProject based API");
