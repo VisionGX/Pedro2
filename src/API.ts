@@ -1,12 +1,16 @@
+import findRecursive from "@spaceproject/findrecursive";
 import express from "express";
 import Express from "express";
 import Bot from "./Bot";
+import { ServerRequest } from "./types/API";
 export interface Req<T> extends Express.Request {
 	body: T
 }
 class API {
+	client: Bot;
 	server: Express.Application;
 	constructor(client: Bot) {
+		this.client = client;
 		this.server = Express();
 
 		// this will parse Content-Type: application/json
@@ -19,45 +23,52 @@ class API {
 			res.setHeader("X-Powered-By", "SpaceProjectAPI");
 			next();
 		});
+		// Add the app to the request object
+		this.server.use((req, _res, next) => {
+			(req as unknown as ServerRequest).parentApp = client;
+			next();
+		});
+		// DEBUG: Log all requests
+		this.server.use((req, _res, next) => {
+			console.log(`${req.method} ${req.path}`);
+			console.log(req.body);
+			next();
+		});
 
 		this.server.get("/", function (req, res) {
-			if (!req.body.content_type)
-				return res.send("This is an SpaceProject based API");
-
-			if (!req.headers.authorization) {
-				return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-			}
-			if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-
-			const { content_type } = req.body;
-			const fn = client.apiFunctions.get(`${content_type}`);
-			if (!fn) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid content type!" });
-			try {
-				fn.execute(client, req, res);
-			} catch (e) {
-				client.logger.error("Error while executing GET API function!", e);
-			}
+			return res.send("This is an SpaceProject based API");
 		});
 
-		this.server.post("/", (req, res) => {
-			if (!req.headers.authorization) {
-				return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-			}
-			if (req.headers.authorization !== `${client.config.api.password}`) return res.status(403).json({ body: req.body, err: true, code: 403, message: "Invalid password!" });
-
-			const { content_type } = req.body;
-			const fn = client.apiFunctions.get(`${content_type}`);
-			if (!fn) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid content type!" });
-			try {
-				fn.execute(client, req, res);
-			} catch (e) {
-				client.logger.error("Error while executing POST API function!", e);
-			}
-		});
+		this.registerRoutes();
 
 		this.server.listen(client.config.api.port, () => {
 			client.logger.info(`API is listening on port ${client.config.api.port}`);
 		});
+	}
+	private async registerRoutes() {
+		// Load files recursively from the routes directory
+		const globalDirName = `${__dirname}/routes`.replace(/\\/g, "/");
+		const fileRoutes = await findRecursive(globalDirName);
+
+		for (const filePair of fileRoutes) {
+			if (!filePair[0].endsWith(".js")) continue;
+			const { default: route } = await import(`${filePair[1]}/${filePair[0]}`);
+			const serverRoute = `${filePair[1].replace(globalDirName, "")}/${filePair[0].split(".")[0]}`.replace(/\$/g, ":");
+			this.client.logger.info(`Registering route ${serverRoute}`);
+			const Iroute = this.server.route(serverRoute);
+			// Register the route methods
+			route.get ? Iroute.get(route.get) : null;
+			route.post ? Iroute.post(route.post) : null;
+			route.put ? Iroute.put(route.put) : null;
+			route.delete ? Iroute.delete(route.delete) : null;
+			route.patch ? Iroute.patch(route.patch) : null;
+		}
+		// Register html, css, and js files
+		this.server.use(express.static(`${__dirname}/../src/public`));
+		this.server.get("*", (_req, res) => {
+			res.status(404).send("Not found.");
+		});
+		this.client.logger.info(`Registered ${fileRoutes.length} routes`);
 	}
 }
 export default API;

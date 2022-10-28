@@ -5,15 +5,13 @@ import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
-	name: "mc user add",
+	name: "mc users remove",
 	type: "SUB_FUNCTION",
-	description: "Add a Minecraft User to the registry.",
+	description: "Remove a Minecraft User from the registry.",
 	category: "config",
 	internal_category: "sub",
 	async execute(client: Bot, interaction: CommandInteraction) {
 		const discord_user = interaction.options.getUser("discord_user");
-		const username = interaction.options.getString("username");
-
 		if(!discord_user) {
 			interaction.reply({
 				embeds: [
@@ -24,50 +22,33 @@ const interaction: Interaction = {
 			});
 			return;
 		}
-		if(!username) {
-			interaction.reply({
-				embeds: [
-					new MessageEmbed()
-						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must provide a username."),
-				],
-			});
-			return;
-		}
-		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData= await mcDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		const mcUserRepo = client.database.source.getRepository(MinecraftPlayer);
 		const mcUser = await mcUserRepo.findOne({
 			where: {
 				userId: `${discord_user.id}`,
 			},
 		});
-		if (mcUser) {
+		if (!mcUser) {
 			interaction.reply({
 				embeds: [
 					new MessageEmbed()
 						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setTitle("User already exists.")
+						.setTitle("User does not exist.")
 						.setDescription(
-							`${discord_user} is already registered to Minecraft. \nAs ${mcUser.name}`
+							`${discord_user} is not registered to Minecraft.`
 						),
 				],
 			});
 			return;
 		}
-		await mcUserRepo.save({
-			userId: discord_user.id,
-			name: username,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			data: mcData!,
-		});
+		await mcUserRepo.remove(mcUser);
 		interaction.reply({
 			embeds: [
 				new MessageEmbed()
 					.setColor(`#${client.config.defaultEmbedColor}`)
-					.setTitle("User added.")
+					.setTitle("User removed.")
 					.setDescription(
-						`${discord_user} has been added to Minecraft as ${username}.`
+						`${discord_user} has been removed from Minecraft.`
 					),
 			],
 		});	

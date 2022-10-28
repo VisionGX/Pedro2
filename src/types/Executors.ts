@@ -17,15 +17,10 @@ interface Interaction {
 	execute<T = CommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
 	execute<T = ContextMenuInteraction>(client: Bot, interaction: T):Promise<unknown>;
 }
-interface APIFunction {
-	name: string;
-	execute(client:Bot, req:Express.Request, res:Express.Response): Promise<unknown>;
-}
-
 interface Job {
 	name: string;
 	cronInterval: string;
 	task: (client:Bot) => Promise<unknown>;
 }
 
-export { Command, Interaction, APIFunction, Job };
+export { Command, Interaction, Job };

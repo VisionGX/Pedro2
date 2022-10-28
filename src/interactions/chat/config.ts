@@ -201,11 +201,6 @@ const interaction: Interaction = {
 							type: "BOOLEAN",
 							required: true,
 						},
-						{
-							name: "server_name",
-							description: "PaperAPI Plugin provided unique Id.",
-							type: "STRING",
-						}
 					]
 				},
 				{
