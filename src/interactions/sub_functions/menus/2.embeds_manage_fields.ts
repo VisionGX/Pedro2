@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageEmbed, MessageSelectMenu, SelectMenuInteraction } from "discord.js";
+import { ActionRowBuilder, EmbedBuilder, SelectMenuBuilder, SelectMenuInteraction } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
@@ -12,7 +12,7 @@ const interaction: Interaction = {
 		const id = interaction.customId.split("|")[1];
 		if(!id) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embed selected")
 					.setDescription("Please select an embed to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -23,7 +23,7 @@ const interaction: Interaction = {
 		const embed = await embedRepo.findOne({ where: { id:parseInt(id) } });
 		if(!embed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed not found")
 					.setDescription("Selected embed was not found.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -34,7 +34,7 @@ const interaction: Interaction = {
 		const option = interaction.values[0];
 		if(!option) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No option selected")
 					.setDescription("Please select an option to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -42,13 +42,13 @@ const interaction: Interaction = {
 			ephemeral: true
 		});
 
-		const editFieldEmbed = new MessageEmbed()
+		const editFieldEmbed = new EmbedBuilder()
 			.setTitle("Manage Embed Fields")
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setDescription("Select an option to apply to this embed's fields.");
 
-		const row = new MessageActionRow();
-		const menu = new MessageSelectMenu();
+		const row = new ActionRowBuilder<SelectMenuBuilder>();
+		const menu = new SelectMenuBuilder();
 		menu.setCustomId(`embeds_edit_fields|${id}`);
 		menu.addOptions([
 			{ label: "List Fields", value: "list" },

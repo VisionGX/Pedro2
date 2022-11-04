@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, SelectMenuInteraction, TextChannel } from "discord.js";
+import { Message, EmbedBuilder, SelectMenuInteraction, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import MessageEmbedField from "../../../database/models/MessageEmbedField";
@@ -14,7 +14,7 @@ const interaction: Interaction = {
 		const id = interaction.customId.split("|")[1];
 		if (!id) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embed selected")
 					.setDescription("Please select an embed to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -25,7 +25,7 @@ const interaction: Interaction = {
 		const embed = await embedRepo.findOne({ where: { id: parseInt(id) } });
 		if (!embed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed not found")
 					.setDescription("Selected embed was not found.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -36,7 +36,7 @@ const interaction: Interaction = {
 		const option = interaction.values[0];
 		if (!option) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No option selected")
 					.setDescription("Please select an option to manage the embed's fields.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -46,7 +46,7 @@ const interaction: Interaction = {
 
 		if (!interaction.channel || !(interaction.channel instanceof TextChannel)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Use a channel")
 					.setDescription("This menu must be used in a text channel.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -58,11 +58,14 @@ const interaction: Interaction = {
 		const questions: string[] = [];
 		switch (option) {
 		case "list": {
-			const fieldsEmbed = new MessageEmbed()
+			const fieldsEmbed = new EmbedBuilder()
 				.setTitle("Embed fields")
 				.setColor(`#${client.config.defaultEmbedColor}`);
 			for await (const [index, field] of embed.fields.entries()) {
-				fieldsEmbed.addField(`${index}. ${field.title}`, field.value);
+				fieldsEmbed.addFields({
+					name: `${index}. ${field.title}`,
+					value: field.value
+				});
 			}
 			return interaction.channel.send({
 				embeds: [fieldsEmbed],
@@ -71,7 +74,7 @@ const interaction: Interaction = {
 		case "add":
 			if (embed.fields.length >= 25) return interaction.editReply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Too many fields")
 						.setDescription("The embed can only have 25 fields.")
 						.setColor(`#${client.config.defaultEmbedColor}`)
@@ -91,7 +94,7 @@ const interaction: Interaction = {
 		default:
 			return interaction.editReply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Invalid option")
 						.setDescription("Please select a valid option to manage the embed's fields.")
 						.setColor(`#${client.config.defaultEmbedColor}`)
@@ -103,7 +106,7 @@ const interaction: Interaction = {
 		for await (const question of questions) {
 			interaction.channel.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Please enter the field's " + question)
 						.setColor(`#${client.config.defaultEmbedColor}`)
 				]
@@ -112,7 +115,7 @@ const interaction: Interaction = {
 			const msg = awaitMsg.first();
 			if (!msg) return interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("No message received")
 						.setDescription("No message was received in time. Cancelling.")
 						.setColor(`#${client.config.defaultEmbedColor}`)
@@ -123,7 +126,7 @@ const interaction: Interaction = {
 				const index = parseInt(msg.content);
 				if (isNaN(index)) return interaction.channel.send({
 					embeds: [
-						new MessageEmbed()
+						new EmbedBuilder()
 							.setTitle("Invalid index")
 							.setDescription("Please enter a valid index.")
 							.setColor(`#${client.config.defaultEmbedColor}`)
@@ -131,7 +134,7 @@ const interaction: Interaction = {
 				});
 				if (index < 0 || index >= embed.fields.length) return interaction.channel.send({
 					embeds: [
-						new MessageEmbed()
+						new EmbedBuilder()
 							.setTitle("Invalid index")
 							.setDescription("Please enter a valid index.")
 							.setColor(`#${client.config.defaultEmbedColor}`)
@@ -181,7 +184,7 @@ const interaction: Interaction = {
 
 		return interaction.channel.send({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Success")
 					.setDescription("Embed successfully updated.")
 					.setColor(`#${client.config.defaultEmbedColor}`)

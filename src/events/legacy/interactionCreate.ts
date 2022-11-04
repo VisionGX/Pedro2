@@ -10,7 +10,7 @@ export default async (client: Bot, interaction:Interaction) => {
 		inter = client.interactions.get(interaction.customId.split("|")[0]);
 		if(!inter) client.logger.warn(`No interaction found for Menu ${interaction.customId}`);
 	}
-	if(interaction.isContextMenu() || interaction.isCommand()){
+	if(interaction.isChatInputCommand() || interaction.isContextMenuCommand()){
 		inter = client.interactions.get(interaction.commandName.replace(/\s/g, "_"));
 		if(!inter) client.logger.warn(`No interaction found for Command ${interaction.commandName}`);
 	}

@@ -1,3 +1,4 @@
+import { MessageReaction } from "discord.js";
 import Bot from "../../Bot";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
 
@@ -8,14 +9,14 @@ export default async (client: Bot) => {
 	for await (const guildSuggestion of guildSuggestions) {
 		if(!guildSuggestion.activeMessageId) continue;
 		const channel = client.channels.cache.get(`${guildSuggestion.config.publicChannel}`);
-		if(!channel || !channel.isText()) continue;
+		if(!channel || !channel.isTextBased()) continue;
 		const message = await channel.messages.fetch(guildSuggestion.activeMessageId).catch(() => {
 			client.logger.warn(`Message ${guildSuggestion.activeMessageId} not found when sending suggestion`);
 		});
 
 		if(!message) continue;
 		let count = 0;
-		message.reactions.cache.forEach((reaction) => {
+		message.reactions.cache.forEach((reaction:MessageReaction) => {
 			if(reaction.emoji.name === "✅"){
 				count = count + reaction.count;
 			}

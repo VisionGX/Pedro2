@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
+import { CommandInteraction, ActionRowBuilder, EmbedBuilder, SelectMenuBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
@@ -19,7 +19,7 @@ const interaction: Interaction = {
 		});
 		if (!guildData) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Guild Data not initialized")
 					.setDescription("Please initialize this server's data with /config init.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -29,18 +29,18 @@ const interaction: Interaction = {
 		const { embeds } = guildData;
 		if (!embeds || embeds.length === 0) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embeds found")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
 		});
 
-		const embedsEmbed = new MessageEmbed()
+		const embedsEmbed = new EmbedBuilder()
 			.setTitle("Edit Embed")
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setDescription("Select which embed you will edit.");
-		const row = new MessageActionRow();
-		const menu = new MessageSelectMenu();
+		const row = new ActionRowBuilder<SelectMenuBuilder>();
+		const menu = new SelectMenuBuilder();
 		for (const embed of embeds) {
 			const data = {
 				label: embed.name,

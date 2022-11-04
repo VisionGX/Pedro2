@@ -1,9 +1,9 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import GuildMessageEmbed from "../database/models/MessageEmbed";
 
-function buildEmbedFrom(dbembed: GuildMessageEmbed): MessageEmbed {
+function buildEmbedFrom(dbembed: GuildMessageEmbed): EmbedBuilder {
 
-	const embed = new MessageEmbed();
+	const embed = new EmbedBuilder();
 
 	if (dbembed.title && dbembed.title !== "") embed.setTitle(dbembed.title);
 	if (dbembed.titleURL && dbembed.titleURL !== "") embed.setURL(dbembed.titleURL);
@@ -21,7 +21,7 @@ function buildEmbedFrom(dbembed: GuildMessageEmbed): MessageEmbed {
 		embed.setAuthor({ name: dbembed.author });
 	}
 	for (let i = 0; (i < dbembed.fields.length && i < 25); i++) {
-		embed.addField(dbembed.fields[i].title, dbembed.fields[i].value);
+		embed.addFields({ name: dbembed.fields[i].title, value: dbembed.fields[i].value });
 	}
 	if (dbembed.color && dbembed.color !== "") embed.setColor(`#${dbembed.color}`);
 	return embed;

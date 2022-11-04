@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
@@ -10,7 +10,7 @@ const interaction: Interaction = {
 	description: "Send an embed message to the specified channel.",
 	category: "data",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const embedsRepo = client.database.source.getRepository(GuildMessageEmbed);
 		const embed = await embedsRepo.findOne({
 			where: {
@@ -20,7 +20,7 @@ const interaction: Interaction = {
 		
 		if (!embed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed not found")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
@@ -28,7 +28,7 @@ const interaction: Interaction = {
 		const channel = interaction.options.getChannel("channel");
 		if (!channel || !(channel instanceof TextChannel)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Invalid channel")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
@@ -40,7 +40,7 @@ const interaction: Interaction = {
 		}).catch(() => {
 			return interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Failed to send message")
 						.setColor(`#${client.config.defaultEmbedColor}`)
 				],
@@ -49,7 +49,7 @@ const interaction: Interaction = {
 		});
 		return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Message sent")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],

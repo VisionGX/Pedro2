@@ -1,9 +1,9 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildSuggest from "../../database/models/GuildSuggest";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
 import { Interaction } from "../../types/Executors";
-const notEnabledEmbed = new MessageEmbed()
+const notEnabledEmbed = new EmbedBuilder()
 	.setTitle("Suggestions are not enabled in this server.")
 	.setDescription("Administrators can enable them with `config suggestions`.");
 const interaction: Interaction = {
@@ -16,11 +16,11 @@ const interaction: Interaction = {
 		{
 			name: "suggestion",
 			description: "Make a Suggestion for the Server!",
-			type: "STRING",
+			type: ApplicationCommandOptionType.String,
 			required: true,
 		}
 	],
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		if (interaction.user.bot) return interaction.reply("A bot can't make a suggestion!");
 		const guildSuggestRepo = client.database.source.getRepository(GuildSuggest);
 		const guildSuggest = await guildSuggestRepo.findOne({
@@ -53,7 +53,7 @@ const interaction: Interaction = {
 
 		await interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Suggestion Submitted!")
 					.setDescription(`${suggestion}`)
 					.setFooter({

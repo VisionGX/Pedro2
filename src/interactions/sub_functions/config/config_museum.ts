@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
@@ -8,12 +8,12 @@ const interaction: Interaction = {
 	description: "Configure the Museum Channel.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const guildDataRepo = client.database.source.getRepository(GuildData);
 		const guildData = await guildDataRepo.findOne({ where: { guildId:`${interaction.guildId}` } });
 		if(!guildData) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Guild Data not initialized")
 					.setDescription("Please initialize this server's data with /config init.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -24,7 +24,7 @@ const interaction: Interaction = {
 		await guildDataRepo.save(guildData);
 		await interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Museum Channel Config")
 					.setDescription(`Museum channel is now ${channel?.toString()}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)

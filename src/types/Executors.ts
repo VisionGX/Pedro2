@@ -1,4 +1,4 @@
-import { ApplicationCommandOption, CommandInteraction, ContextMenuInteraction, Message } from "discord.js";
+import { ApplicationCommandOption, CommandInteraction, ContextMenuCommandInteraction, Message } from "discord.js";
 import Bot from "../Bot";
 
 interface Command {
@@ -15,7 +15,7 @@ interface Interaction {
 	internal_category: "app" | "guild" | "sub";
 	options?: ApplicationCommandOption[];
 	execute<T = CommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
-	execute<T = ContextMenuInteraction>(client: Bot, interaction: T):Promise<unknown>;
+	execute<T = ContextMenuCommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
 }
 interface Job {
 	name: string;

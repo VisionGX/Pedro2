@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageActionRow, MessageButton, MessageEmbed, TextChannel } from "discord.js";
+import { CommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, TextChannel, PermissionFlagsBits, ButtonStyle } from "discord.js";
 import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
@@ -15,7 +15,7 @@ const interaction: Interaction = {
 		const verify = await verifyRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if (!verify) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verify Message not found")
 					.setDescription("Please enable and configure the verify message first.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -24,7 +24,7 @@ const interaction: Interaction = {
 		const channel = verify.channel ? interaction.guild?.channels.cache.get(verify.channel) : undefined;
 		if (!channel || !(channel instanceof TextChannel)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No channel provided or is not a text channel")
 					.setDescription("Please provide a text channel to send the verify message to.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -32,9 +32,9 @@ const interaction: Interaction = {
 			ephemeral: true
 		});
 
-		if (!channel.guild.me?.permissionsIn(channel).has("SEND_MESSAGES")) return interaction.reply({
+		if (!channel.guild.members.me?.permissionsIn(channel).has(PermissionFlagsBits.SendMessages)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("I don't have permission to send messages in that channel")
 					.setDescription("Please make sure I have permission to send messages in that channel.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -45,16 +45,16 @@ const interaction: Interaction = {
 		const verifyEmbed = verify.message;
 		if (!verifyEmbed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No message configured")
 					.setDescription("Please configure a message to send to the verify message channel.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
 			ephemeral: true
 		});
-		if(!verify.verifyRole) return interaction.reply({
+		if (!verify.verifyRole) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No role configured")
 					.setDescription("Please configure a role to give to users who verify.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -62,14 +62,14 @@ const interaction: Interaction = {
 			ephemeral: true
 		});
 
-		const row = new MessageActionRow();
+		const row = new ActionRowBuilder<ButtonBuilder>();
 		const embed = buildEmbedFrom(verifyEmbed);
-		const button = new MessageButton();
+		const button = new ButtonBuilder();
 		button.setCustomId("buttonVerify");
-		button.setStyle("SECONDARY");
-		if(verify.label) button.setLabel(verify.label);
-		if(verify.emoji && verify.emoji !== "") button.setEmoji(verify.emoji);
-		if(verify.emoji === "") button.setEmoji("✅");
+		button.setStyle(ButtonStyle.Secondary);
+		if (verify.label) button.setLabel(verify.label);
+		if (verify.emoji && verify.emoji !== "") button.setEmoji(verify.emoji);
+		if (verify.emoji === "") button.setEmoji("✅");
 		row.addComponents(button);
 
 		const message = await channel.send({
@@ -84,13 +84,23 @@ const interaction: Interaction = {
 		});
 		return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verify Message Sent")
 					.setDescription("The verify message has been sent to the channel.")
-					.addField("Channel", `<#${channel.id}>`)
-					.addField("Message", `${message ? message.id : "Error"}`)
+					.addFields([
+						{
+							name: "Channel",
+							value: `<#${channel.id}>`,
+							inline: true
+						},
+						{
+							name: "Message",
+							value: `${message ? message.id : "Error"}`,
+							inline: true
+						}
+					])
 					.setColor(`#${client.config.defaultEmbedColor}`)
-			],
+			]
 		});
 	}
 };
