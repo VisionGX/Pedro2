@@ -14,6 +14,10 @@ export default async (client: Bot, interaction:Interaction) => {
 		inter = client.interactions.get(interaction.commandName.replace(/\s/g, "_"));
 		if(!inter) client.logger.warn(`No interaction found for Command ${interaction.commandName}`);
 	}
+	if(interaction.isModalSubmit()) {
+		inter = client.interactions.get(interaction.customId.split("|")[0]);
+		if(!inter) client.logger.warn(`No interaction found for Modal ${interaction.customId}`);
+	}
 	if(!inter) return;
 	try{
 		await inter.execute(client, interaction);
