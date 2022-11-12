@@ -8,6 +8,7 @@ import { Log } from "./util/Logger";
 import { BotConfig } from "./types/Config";
 import API from "./API";
 import { JSONPackage } from "./types/JSONPackage";
+import CLI from "./CLI";
 
 class Bot extends Client {
 	logger: Log.Logger;
@@ -17,6 +18,7 @@ class Bot extends Client {
 	jobs: Collection<string, Job>;
 	database: SPDatabase;
 	server: API;
+	commandline:CLI;
 	readonly package: JSONPackage;
 	constructor() {
 		super({
@@ -46,6 +48,7 @@ class Bot extends Client {
 		this.config = require("../config");
 		this.database = new SPDatabase(this.config.database);
 		this.server = new API(this);
+		this.commandline = new CLI(this, process.stdin, process.stdout);
 		this.package = require("../package.json");
 	}
 	async registerEvents() {
