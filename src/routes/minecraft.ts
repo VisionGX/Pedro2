@@ -57,7 +57,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		});
 		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server identifier!" });
 		const users = await mcUserRepo.find();
-		const user = users.find(p => p && (p.name === req.body.args.player.name));
+		const user = users.find(p => p && (p.name === req.body.args.player.name || p.uuid === req.body.args.player.uuid));
 		if (!user) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
 		if (user.uuid && user.uuid !== req.body.args.player.uuid) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
 		const lastIp = user.lastIp;
