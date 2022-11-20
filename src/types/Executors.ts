@@ -1,4 +1,4 @@
-import { ApplicationCommandOption, CommandInteraction, ContextMenuCommandInteraction, Message, ModalSubmitInteraction } from "discord.js";
+import { ApplicationCommandOption, ApplicationCommandType, CommandInteraction, ContextMenuCommandInteraction, Message, ModalSubmitInteraction } from "discord.js";
 import Bot from "../Bot";
 
 interface Command {
@@ -8,7 +8,7 @@ interface Command {
 	execute(client:Bot, message:Message, args:string[]): Promise<unknown>;
 }
 interface Interaction {
-	type: "CHAT_INPUT" | "CONTEXT_MENU"| "USER"| "MESSAGE" | "SUB_FUNCTION";
+	type: ApplicationCommandType | "SUB_FUNCTION";
 	name: string;
 	description: string;
 	category: string;
@@ -23,5 +23,11 @@ interface Job {
 	cronInterval: string;
 	task: (client:Bot) => Promise<unknown>;
 }
+interface CliCommand {
+	name: string;
+	description: string;
+	usage: string;
+	execute(client:Bot, args:string[]): Promise<unknown>;
+}
 
-export { Command, Interaction, Job };
+export { Command, Interaction, Job, CliCommand };

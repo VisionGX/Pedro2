@@ -1,10 +1,10 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import Bot from "../../Bot";
 import { Interaction } from "../../types/Executors";
 
 const interaction: Interaction = {
 	name: "embeds",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Manage this server's embeds.",
 	category: "other",
 	internal_category: "guild",

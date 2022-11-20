@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildSuggest from "../../database/models/GuildSuggest";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
@@ -8,7 +8,7 @@ const notEnabledEmbed = new EmbedBuilder()
 	.setDescription("Administrators can enable them with `config suggestions`.");
 const interaction: Interaction = {
 	name: "suggestion",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Make a Suggestion for the Server!",
 	category: "other",
 	internal_category: "app",

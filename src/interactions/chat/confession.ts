@@ -1,10 +1,10 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
 const interaction: Interaction = {
 	name: "confession",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Make a Confession on the server!",
 	category: "other",
 	internal_category: "app",

@@ -1,9 +1,9 @@
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandType, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import { Interaction } from "../../types/Executors";
 const interaction:Interaction = {
 	name: "ping",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Checks the bot's ping",
 	category: "other",
 	internal_category: "app",

@@ -1,11 +1,11 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
 
 const interaction: Interaction = {
 	name: "config",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Configure the bot's behaviour in this server.",
 	category: "other",
 	internal_category: "guild",

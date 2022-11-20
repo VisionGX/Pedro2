@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Guild } from "discord.js";
+import { ApplicationCommandDataResolvable, ApplicationCommandType, Guild } from "discord.js";
 import Bot from "../../Bot";
 
 interface CleanInteraction {
@@ -14,7 +14,7 @@ export default async (client: Bot, guild: Guild) => {
 		for await (const [,interaction] of client.interactions.entries()) {
 			if(interaction.type === "SUB_FUNCTION") continue;
 			const cleanInt:CleanInteraction = {...interaction};
-			cleanInt.description = (interaction.type == "USER" || interaction.type == "MESSAGE") ? undefined : interaction.description;
+			cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 			cleanInt.category = null;
 			if(cleanInt.internal_category == "app")arr.push(cleanInt);
 		}
@@ -30,7 +30,7 @@ export default async (client: Bot, guild: Guild) => {
 	for await (const [,interaction] of client.interactions.entries()) {
 		if(interaction.type === "SUB_FUNCTION") continue;
 		const cleanInt:CleanInteraction = {...interaction};
-		cleanInt.description = (interaction.type == "USER" || interaction.type == "MESSAGE") ? undefined : interaction.description;
+		cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 		cleanInt.category = null;
 		if(cleanInt.internal_category == "guild")arr.push(cleanInt);
 	}

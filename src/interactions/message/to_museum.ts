@@ -1,10 +1,10 @@
-import { AttachmentBuilder, MessageContextMenuCommandInteraction, EmbedBuilder, PermissionFlagsBits, Attachment } from "discord.js";
+import { AttachmentBuilder, MessageContextMenuCommandInteraction, EmbedBuilder, PermissionFlagsBits, Attachment, ApplicationCommandType } from "discord.js";
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
 const interaction:Interaction = {
 	name: "send to museum",
-	type: "MESSAGE",
+	type: ApplicationCommandType.Message,
 	description: "Sends a message with attachments to the museum",
 	category: "other",
 	internal_category: "guild",
