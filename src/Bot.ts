@@ -8,7 +8,7 @@ import { Log } from "./util/Logger";
 import { BotConfig } from "./types/Config";
 import API from "./API";
 import { JSONPackage } from "./types/JSONPackage";
-import CLI from "./CLI";
+import CLI from "./cli/CLI";
 
 class Bot extends Client {
 	logger: Log.Logger;
