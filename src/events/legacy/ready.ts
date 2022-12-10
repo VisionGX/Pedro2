@@ -1,5 +1,4 @@
-import { ExcludeEnum } from "discord.js";
-import { ActivityTypes } from "discord.js/typings/enums";
+import { ActivityType } from "discord.js";
 import Bot from "../../Bot";
 
 
@@ -9,7 +8,9 @@ export default async (client: Bot) => {
 		return;
 	}
 	client.logger.info("Logged in as " + client.user.tag);
-	client.user.setActivity(`${client.config.activity.message}`, { type: `${client.config.activity.type}` as ExcludeEnum<typeof ActivityTypes, "CUSTOM"> });
+	client.user.setActivity(`${client.config.activity.message}`, { 
+		type: client.config.activity.type == "PLAYING" ? ActivityType.Playing : client.config.activity.type == "LISTENING" ? ActivityType.Listening : client.config.activity.type == "WATCHING" ? ActivityType.Watching : undefined
+	});
 
 	client.logger.info("App Started");
 };

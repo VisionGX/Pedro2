@@ -1,5 +1,5 @@
 import Captcha from "@haileybot/captcha-generator";
-import { ButtonInteraction, GuildMember, Message, MessageAttachment, MessageEmbed } from "discord.js";
+import { ButtonInteraction, GuildMember, Message, MessageAttachment, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildVerify from "../../database/models/GuildVerify";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,7 +11,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		const verify = await verifyRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if (!verify) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verificaton not found")
 					.setDescription("Please contact the bot's administrator.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -24,7 +24,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 
 		if (interaction.member.roles.cache.has(verify.verifyRole)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Already verified")
 					.setDescription("You have already been verified.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -39,7 +39,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		const attach = new MessageAttachment(captcha.JPEGStream, "captcha.jpeg");
 		const message = await interaction.member.send({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verification")
 					.setDescription("Please type out what you can read.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -50,7 +50,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		});
 		if (!message) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verification failed")
 					.setDescription("You must be able to receive a DM to verify.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -63,7 +63,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		const msg = awaitMsg.first();
 		if (!msg) return interaction.member.send({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No message received")
 					.setDescription("No message was received in time. Cancelling.")
 					.setColor(`#${client.config.defaultEmbedColor}`)

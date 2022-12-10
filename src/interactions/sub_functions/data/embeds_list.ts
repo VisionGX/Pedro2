@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
@@ -14,7 +14,7 @@ const interaction: Interaction = {
 		const guildData = await guildDataRepo.findOne({ where: { guildId: interaction.guild?.id }, relations: ["embeds"] });
 		if(!guildData) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No Embeds")
 					.setDescription("This server has no Embeds.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -30,7 +30,7 @@ const interaction: Interaction = {
 
 		if(!embeds.length || embeds.length <= 0) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No Embeds")
 					.setDescription("This server has no Embeds.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -40,11 +40,17 @@ const interaction: Interaction = {
 
 		return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embeds")
 					.setDescription(`This server has ${guildData.embeds.length} Embeds.`)
 					.setColor(`#${client.config.defaultEmbedColor}`)
-					.addField("Embeds", embeds.map(embed => `\`${embed.name}\``).join(", "))
+					//.addField("Embeds", embeds.map(embed => `\`${embed.name}\``).join(", "))
+					.addFields([
+						{
+							name: "Embeds",
+							value: embeds.map(embed => `\`${embed.name}\``).join(", ")
+						}
+					])
 			],
 		});
 		

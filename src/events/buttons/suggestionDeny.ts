@@ -1,4 +1,4 @@
-import { ButtonInteraction, Message, MessageEmbed } from "discord.js";
+import { ButtonInteraction, Message, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
 
@@ -8,14 +8,14 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 	const suggestion = await guildSuggestionRepo.findOne({ where: { id: parseInt(id) }, relations: ["config"] });
 	if (!suggestion) return interaction.reply({
 		embeds: [
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setTitle("Suggestion not found")
 				.setDescription("Please contact the bot's administrator.")
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]
 	});
 	await guildSuggestionRepo.remove(suggestion);
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setTitle("Suggestion removed!")
 		.setDescription(`${suggestion.value}`)
 		.setFooter({

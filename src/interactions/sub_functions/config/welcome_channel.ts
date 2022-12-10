@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildWelcome from "../../../database/models/GuildWelcome";
 import { Interaction } from "../../../types/Executors";
@@ -9,12 +9,12 @@ const interaction: Interaction = {
 	description: "Configure the welcome message channel.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const welcomeRepo = client.database.source.getRepository(GuildWelcome);
 		const welcome = await welcomeRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if (!welcome) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Welcome message not found")
 					.setDescription("Please enable the welcome message first.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -23,7 +23,7 @@ const interaction: Interaction = {
 		const channel = interaction.options.getChannel("welcome_channel");
 		if (!channel) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No channel provided")
 					.setDescription("Please provide a channel for the welcome message to be sent every time someone joins.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -32,7 +32,7 @@ const interaction: Interaction = {
 		});
 		if (!(channel instanceof TextChannel)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Invalid channel")
 					.setDescription("Please provide a text channel for the welcome message to be sent every time someone joins.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -41,9 +41,9 @@ const interaction: Interaction = {
 		});
 
 
-		if (!channel.guild.me?.permissionsIn(channel).has("SEND_MESSAGES")) return interaction.reply({
+		if (!channel.guild.members.me?.permissionsIn(channel).has(PermissionFlagsBits.SendMessages)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("I don't have permission to send messages in that channel")
 					.setDescription("Please make sure I have permission to send messages in that channel.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -56,7 +56,7 @@ const interaction: Interaction = {
 
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Welcome Message Config")
 					.setDescription(`The welcome message channel has been set to ${channel.toString()}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)

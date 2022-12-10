@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
@@ -9,12 +9,12 @@ const interaction: Interaction = {
 	description: "Configure the verify button label.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const verifyRepo = client.database.source.getRepository(GuildVerify);
 		const verify = await verifyRepo.findOne({ where: { guildId:`${interaction.guildId}` } });
 		if(!verify) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verify Message not found")
 					.setDescription("Please enable the verify message first.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -23,7 +23,7 @@ const interaction: Interaction = {
 		const label = interaction.options.getString("label");
 		if(!label) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No label provided")
 					.setDescription("Please provide a label.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -34,7 +34,7 @@ const interaction: Interaction = {
 		const labelRegex = /^[a-zA-Z0-9 _]{1,25}$/;
 		if(!labelRegex.test(label)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Invalid label")
 					.setDescription("Please provide a valid label.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -46,7 +46,7 @@ const interaction: Interaction = {
 
 		return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verify Button Label Updated")
 					.setDescription("The verify button label has been updated.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
