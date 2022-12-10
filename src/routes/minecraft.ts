@@ -46,6 +46,30 @@ const getFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Resp
 	
 };
 const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Response) => Promise<unknown> } = {
+	// Pre-auth handler
+	async PreAuth(client: Bot, req: Req<RequestContainer<PlayerAuthArgs>>, res: Response) {
+		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcUserRepo = client.database.source.getRepository(MinecraftPlayer);
+		const mcServer = await mcServerRepo.findOne({
+			where: {
+				identifier: `${req.body.id}`,
+			},
+		});
+		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server identifier!" });
+		const users = await mcUserRepo.find();
+		const user = users.find(p => p && (p.name === req.body.args.player.name));
+		if (!user) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
+		if(!user.uuid){
+			user.uuid = req.body.args.player.uuid;
+			await mcUserRepo.save(user);
+		}
+		const body = {
+			identifier: user.userId,
+			name: user.name,
+			player: req.body.args.player,
+		};
+		res.status(200).json({ body, err: false, code: 200, message: "OK" });
+	},
 	// Auth handler
 	async Auth(client: Bot, req: Req<RequestContainer<PlayerAuthArgs>>, res: Response) {
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
@@ -57,7 +81,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		});
 		if (!mcServer) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Invalid server identifier!" });
 		const users = await mcUserRepo.find();
-		const user = users.find(p => p && (p.name === req.body.args.player.name));
+		const user = users.find(p => p && (p.name === req.body.args.player.name || p.uuid === req.body.args.player.uuid));
 		if (!user) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
 		if (user.uuid && user.uuid !== req.body.args.player.uuid) return res.status(404).json({ body: req.body, err: true, code: 404, message: "User not found!" });
 		const lastIp = user.lastIp;
