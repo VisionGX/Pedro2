@@ -104,7 +104,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		const eventAlloweRole = await eventAlloweRoleRepo.find();
 		const roleIds = JSON.parse(eventAlloweRole[0].roleIds);
 		if (!member.roles.cache.has(eventAlloweRole[0].currentRole) && !member.roles.cache.find(r => roleIds.includes(r.id))){
-			return;
+			return res.status(404).json({ body: req.body, err: true, code: 404, message: "Member not found!" });
 		}
 		
 		if (lastIp !== newIP) {
