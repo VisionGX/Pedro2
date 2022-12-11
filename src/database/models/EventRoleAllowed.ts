@@ -1,13 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
-export default class MinecraftPlayer {
+export default class EventRoleAllowed {
 	@PrimaryGeneratedColumn()
 		id!: number;
+
+	@Column({
+		type: "blob",
+	})
+		roleIds!: string;	
 
 	@Column({
 		type: "varchar",
 		length: "25",
 	})
-		roleId!: string;	
+		currentRole!: string;
 }

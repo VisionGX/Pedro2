@@ -2,6 +2,7 @@ import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 import { Response } from "express";
 import { Req } from "../API";
 import Bot from "../Bot";
+import EventRoleAllowed from "../database/models/EventRoleAllowed";
 import MinecraftPlayer from "../database/models/MinecraftPlayer";
 import MinecraftServer from "../database/models/MinecraftServer";
 import { ServerRequest } from "../types/API";
@@ -99,6 +100,13 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 			.catch(() => null);
 		if (!member) return res.status(404).json({ body: req.body, err: true, code: 404, message: "Member not found!" });
 
+		const eventAlloweRoleRepo = client.database.source.getRepository(EventRoleAllowed);
+		const eventAlloweRole = await eventAlloweRoleRepo.find();
+		const roleIds = JSON.parse(eventAlloweRole[0].roleIds);
+		if (!member.roles.cache.has(eventAlloweRole[0].currentRole) && !member.roles.cache.find(r => roleIds.includes(r.id))){
+			return;
+		}
+		
 		if (lastIp !== newIP) {
 			await member.send({
 				embeds: [
