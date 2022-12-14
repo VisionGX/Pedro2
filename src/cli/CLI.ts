@@ -22,7 +22,7 @@ class CLI {
 	async loadCommands() {
 		const commands = await findRecursive(`${__dirname}/commands`);
 		for (const [command,dir] of commands) {
-			const cmd = await import(`${dir}/${command}`);
+			const cmd:{default:CliCommand} = await import(`${dir}/${command}`);
 			if (!cmd.default) continue;
 			this.commands.set(cmd.default.name, cmd.default);
 		}
