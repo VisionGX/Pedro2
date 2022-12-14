@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildSuggest from "../../database/models/GuildSuggest";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
@@ -49,7 +49,7 @@ const interaction: Interaction = {
 		//guildSuggest.suggestions.push(guildSuggestion);
 		//await guildSuggestRepo.save(guildSuggest);
 
-		client.emit("suggestion", guildSuggestion);
+		client.emit("suggestionSubmit", {suggestion:guildSuggestion});
 
 		await interaction.reply({
 			embeds: [

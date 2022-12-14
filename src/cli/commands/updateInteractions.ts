@@ -9,7 +9,7 @@ const cmd: CliCommand = {
 			client.logger.info("Updating all interactions");
 			client.emit("updateInteractions");
 			for await (const [, guild] of client.guilds.cache) {
-				client.emit("updateInteractions", guild);
+				client.emit("updateInteractions", {guild});
 			}
 		} else {
 			client.logger.info(`Updating interactions for guild ${guildId}`);
@@ -18,8 +18,8 @@ const cmd: CliCommand = {
 				client.logger.error("Guild not found");
 				return;
 			}
-			client.emit("updateInteractions", guild);
+			client.emit("updateInteractions", {guild});
 		}
 	}
-}
+};
 export default cmd;

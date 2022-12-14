@@ -1,9 +1,10 @@
 import { MessageReaction, User } from "discord.js";
-import Bot from "../../Bot";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { EventExecutor } from "../../types/Executors";
 
 
-export default async (client: Bot, reaction:MessageReaction, user:User) => {
+const e: EventExecutor<{ reaction: MessageReaction, user:User }> = async (client, params) => {
+	const { reaction, user } = params;
 	if(user.bot) return;
 	if(!reaction.message.guild) return;
 	const guildSuggestionRepository = client.database.source.getRepository(GuildSuggestion);
@@ -25,3 +26,4 @@ export default async (client: Bot, reaction:MessageReaction, user:User) => {
 	guildSuggestion.count = count;
 	await guildSuggestionRepository.save({...guildSuggestion});
 };
+export default e;

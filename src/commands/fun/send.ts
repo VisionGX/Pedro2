@@ -1,13 +1,13 @@
-import { Message, AttachmentBuilder, TextChannel, Attachment, PermissionFlagsBits } from "discord.js";
-import { Permissions } from "discord.js";
+import { Message, TextChannel, Attachment, PermissionFlagsBits } from "discord.js";
 import Bot from "../../Bot";
+import { Command } from "../../types/Executors";
 
-export default {
+const cmd: Command = {
 	name: "send",
 	aliases: [],
 	category: "fun",
 	description: "Receive what you sent!",
-	utilization: "{prefix}send",
+	usage: "{prefix}send",
 	async execute(client: Bot, message: Message, args: string[]): Promise<void> {
 		if (!message.member?.permissions.has(PermissionFlagsBits.Administrator) && !(client.config.admins.includes(message.member?.id as string))) return;
 
@@ -36,3 +36,4 @@ export default {
 		}
 	},
 };
+export default cmd;

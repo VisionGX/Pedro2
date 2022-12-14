@@ -1,9 +1,10 @@
 import { GuildMember, TextChannel } from "discord.js";
-import Bot from "../../Bot";
 import GuildWelcome from "../../database/models/GuildWelcome";
+import { EventExecutor } from "../../types/Executors";
 import { buildEmbedFrom } from "../../util/Functions";
 
-export default async (client: Bot, member: GuildMember) => {
+const e: EventExecutor<{ member: GuildMember }> = async (client, params) => {
+	const { member } = params;
 	const repo = client.database.source.getRepository(GuildWelcome);
 	let guildWelcome = await repo.findOne({ where: { guildId: member.guild.id } });
 	if (!guildWelcome) {
@@ -29,3 +30,4 @@ export default async (client: Bot, member: GuildMember) => {
 	if (channel instanceof TextChannel)
 		channel.send({ embeds: [welcomeEmbed] });
 };
+export default e;
