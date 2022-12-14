@@ -5,7 +5,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "suggestions channels",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the suggestions channels.",
 	category: "config",
 	internal_category: "sub",

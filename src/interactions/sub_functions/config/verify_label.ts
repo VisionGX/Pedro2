@@ -5,7 +5,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "verify button label",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify button label.",
 	category: "config",
 	internal_category: "sub",

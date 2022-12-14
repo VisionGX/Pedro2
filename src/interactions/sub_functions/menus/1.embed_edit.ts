@@ -4,7 +4,7 @@ import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "embed edit",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Edit the menu-selected embed.",
 	category: "data",
 	internal_category: "sub",

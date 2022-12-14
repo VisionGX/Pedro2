@@ -5,7 +5,7 @@ import GuildWelcome from "../../../database/models/GuildWelcome";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "welcome enabled",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the welcome message enabled.",
 	category: "config",
 	internal_category: "sub",

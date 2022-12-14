@@ -6,7 +6,7 @@ import { buildEmbedFrom } from "../../../util/Functions";
 
 const interaction: Interaction = {
 	name: "embeds send",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Send an embed message to the specified channel.",
 	category: "data",
 	internal_category: "sub",

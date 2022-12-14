@@ -5,7 +5,7 @@ import GuildSuggest from "../../../database/models/GuildSuggest";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "suggestions enabled",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the suggestions enabled.",
 	category: "config",
 	internal_category: "sub",

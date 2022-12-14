@@ -5,7 +5,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "verify role",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify member role.",
 	category: "config",
 	internal_category: "sub",

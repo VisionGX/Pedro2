@@ -4,7 +4,7 @@ import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "menu embeds delete",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Delete an embed, as a menu option.",
 	category: "data",
 	internal_category: "sub",

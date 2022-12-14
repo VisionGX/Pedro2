@@ -4,7 +4,7 @@ import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "config confessions",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the Confessions.",
 	category: "config",
 	internal_category: "sub",

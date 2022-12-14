@@ -5,7 +5,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "embeds edit",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Edit an embed message.",
 	category: "data",
 	internal_category: "sub",

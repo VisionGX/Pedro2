@@ -5,7 +5,7 @@ import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "verify enabled",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify message enabled.",
 	category: "config",
 	internal_category: "sub",

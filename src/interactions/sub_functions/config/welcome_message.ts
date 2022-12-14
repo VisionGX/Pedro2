@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "welcome message",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the welcome message embed.",
 	category: "config",
 	internal_category: "sub",
