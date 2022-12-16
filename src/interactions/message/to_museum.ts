@@ -1,4 +1,4 @@
-import { AttachmentBuilder, MessageContextMenuCommandInteraction, EmbedBuilder, PermissionFlagsBits, Attachment, ApplicationCommandType } from "discord.js";
+import { MessageContextMenuCommandInteraction, EmbedBuilder, PermissionFlagsBits, Attachment, ApplicationCommandType } from "discord.js";
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
