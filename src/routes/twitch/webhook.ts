@@ -19,11 +19,11 @@ export default {
 	},
 	async post(req: ServerRequest, res: Response) {
 		if (!req.headers[HEADER_TWITCH_MESSAGE_TYPE]) return res.status(400).json({ err: true, code: 400, message: "Bad Request!" });
-		if (req.headers[HEADER_TWITCH_MESSAGE_TYPE] === TYPE_TWITCH_CHANNEL_MESSAGE) {
+		if (req.headers[HEADER_TWITCH_MESSAGE_TYPE] === TYPE_TWITCH_NOTIFICATION_MESSAGE) {
 			req.parentApp.logger.info("Twitch Notification Received");
 			doWebhookBehavior(req, res);
 		} else
-			if (req.headers[HEADER_TWITCH_MESSAGE_TYPE] === TYPE_TWITCH_NOTIFICATION_MESSAGE) {
+			if (req.headers[HEADER_TWITCH_MESSAGE_TYPE] === TYPE_TWITCH_CHANNEL_MESSAGE) {
 				req.parentApp.logger.info("Twitch Challenge Received");
 				doCallbackBehavior(req, res);
 			}
