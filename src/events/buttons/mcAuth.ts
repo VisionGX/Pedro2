@@ -1,8 +1,10 @@
-import { ButtonInteraction, MessageEmbed } from "discord.js";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import MinecraftPlayer from "../../database/models/MinecraftPlayer";
+import { EventExecutor } from "../../types/Executors";
 
-export default async (client: Bot, interaction: ButtonInteraction) => {
+const e: EventExecutor<{ interaction: ButtonInteraction }> = async (client, params) => {
+	const { interaction } = params;
 	const id = interaction.customId.split("|")[1];
 	interaction.deferUpdate();
 
@@ -14,8 +16,8 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 	});
 	if (!mcUser) return interaction.editReply({
 		embeds: [
-			new MessageEmbed()
-				.setColor("RED")
+			new EmbedBuilder()
+				.setColor(`#${/*Red*/ 0xFF0000}`)
 				.setDescription("This user is not registered in the database."),
 		],
 	});
@@ -31,7 +33,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		...player,
 		enabled: true
 	});
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setTitle("Authorized!")
 		.setDescription("Your new IP has been authorized.\nYou can now Login")
 		.setColor(`#${client.config.defaultEmbedColor}`);
@@ -39,7 +41,8 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		embeds: [embed],
 	}).catch(() => null);
 
-	if (interaction.message.type == "DEFAULT") {
+	if (interaction.message.deletable) {
 		await interaction.message.delete().catch(() => null);
 	}
 };
+export default e;
