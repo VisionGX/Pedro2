@@ -3,16 +3,20 @@ import Bot from "../../Bot";
 
 export default async (client: Bot, interaction:Interaction) => {
 	
-	if(interaction.isButton()) return client.emit(interaction.customId.split("|")[0], interaction);
+	if(interaction.isButton()) return client.emit(interaction.customId.split("|")[0], {interaction});
 
 	let inter = null;
-	if(interaction.isSelectMenu()) {
+	if(interaction.isAnySelectMenu()) {
 		inter = client.interactions.get(interaction.customId.split("|")[0]);
 		if(!inter) client.logger.warn(`No interaction found for Menu ${interaction.customId}`);
 	}
-	if(interaction.isContextMenu() || interaction.isCommand()){
+	if(interaction.isChatInputCommand() || interaction.isContextMenuCommand()){
 		inter = client.interactions.get(interaction.commandName.replace(/\s/g, "_"));
 		if(!inter) client.logger.warn(`No interaction found for Command ${interaction.commandName}`);
+	}
+	if(interaction.isModalSubmit()) {
+		inter = client.interactions.get(interaction.customId.split("|")[0]);
+		if(!inter) client.logger.warn(`No interaction found for Modal ${interaction.customId}`);
 	}
 	if(!inter) return;
 	try{

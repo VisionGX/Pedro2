@@ -1,17 +1,21 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
+import { Command } from "../../types/Executors";
 
-export default {
+const cmd: Command = {
 	name: "ping",
+	aliases: [],
+	category: "info",
 	description: "Ping the bot",
 	usage: "ping",
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-	execute(client: Bot, message: Message, args: string[]) {
+	async execute(client: Bot, message: Message, args: string[]) {
 		message.reply({embeds: [
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setTitle("Ready!")
 				.setDescription(`The Ping is: ${client.ws.ping}ms`)
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]});
 	}
 };
+export default cmd;

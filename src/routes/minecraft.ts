@@ -1,4 +1,4 @@
-import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { Response } from "express";
 import { Req } from "../API";
 import Bot from "../Bot";
@@ -102,7 +102,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		if (lastIp !== newIP) {
 			await member.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Minecraft Authentication")
 						.setDescription("Login attempt from a new IP!\nYou'll have to authorize your new device or location.\nIf you are not trying to login from a new device, please contact an admin and DO NOT CLICK *Authorize*.")
@@ -116,11 +116,11 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 
 				],
 				components: [
-					new MessageActionRow()
+					new ActionRowBuilder<ButtonBuilder>()
 						.addComponents([
-							new MessageButton()
+							new ButtonBuilder()
 								.setLabel("Authorize")
-								.setStyle("SUCCESS")
+								.setStyle(ButtonStyle.Success)
 								.setCustomId(`mcAuth|${user.uuid}`),
 						]),
 				]
@@ -130,7 +130,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		if (!user.enabled && lastIp === newIP) {
 			await member.send({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Minecraft Authentication")
 						.setDescription("You have just tried to login, but the request was denied.")
@@ -146,7 +146,7 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		}
 		await member.send({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("Minecraft Authentication")
@@ -183,14 +183,14 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		if (!mcServer.data!.log || !mcServer.data!.log.enabled) return;
 
 		const channel = await client.channels.fetch(`${mcServer.data!.log.channelId}`);
-		if (!channel || !channel.isText()) return;
+		if (!channel || !channel.isTextBased()) return;
 
 		const { args, content } = req.body;
 		const fields = [];
 		for await (const [k, v] of Object.entries(args)) {
 			fields.push({ name: k, value: `${v.length >= 1 ? v : "Empty"}` });
 		}
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle("Minecraft Logging")
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setDescription(`${content}`)
@@ -219,14 +219,14 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		if (!mcServer.data!.log || !mcServer.data!.log.enabled) return;
 
 		const channel = await client.channels.fetch(`${mcServer.data!.log.channelId}`);
-		if (!channel || !channel.isText()) return;
+		if (!channel || !channel.isTextBased()) return;
 
 		const { args, content } = req.body;
 		const fields = [];
 		for await (const [k, v] of Object.entries(args)) {
 			fields.push({ name: k, value: `${v.length >= 1 ? v : "Empty"}` });
 		}
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle("Minecraft Logging")
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setDescription(`${content}`)
@@ -255,14 +255,14 @@ const postFunctions: { [key: string]: (client: Bot, req: ServerRequest, res: Res
 		if (!mcServer.data!.log || !mcServer.data!.log.enabled) return;
 
 		const channel = await client.channels.fetch(`${mcServer.data!.log.channelId}`);
-		if (!channel || !channel.isText()) return;
+		if (!channel || !channel.isTextBased()) return;
 
 		const { args, content } = req.body;
 		const fields = [];
 		for await (const [k, v] of Object.entries(args)) {
 			fields.push({ name: k, value: `${v.length >= 1 ? v : "Empty"}` });
 		}
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle("Minecraft Logging")
 			.setDescription(`${content}`)
 			.setColor(`#${client.config.defaultEmbedColor}`)

@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
@@ -6,16 +6,16 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "mc users remove",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Remove a Minecraft User from the registry.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const discord_user = interaction.options.getUser("discord_user");
 		if(!discord_user) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a discord user."),
 				],
@@ -31,7 +31,7 @@ const interaction: Interaction = {
 		if (!mcUser) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("User does not exist.")
 						.setDescription(
@@ -44,7 +44,7 @@ const interaction: Interaction = {
 		await mcUserRepo.remove(mcUser);
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("User removed.")
 					.setDescription(

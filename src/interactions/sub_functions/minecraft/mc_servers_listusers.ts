@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
@@ -7,18 +7,18 @@ import { Interaction } from "../../../types/Executors";
 
 /* const interaction: Interaction = {
 	name: "mc servers adduser",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Add a user to a Minecraft Server.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const name = interaction.options.getString("name");
 		const discord_user = interaction.options.getUser("user");
 
 		if(!name) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a server name."),
 				],
@@ -28,7 +28,7 @@ import { Interaction } from "../../../types/Executors";
 		if(!discord_user) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide an user."),
 				],
@@ -40,7 +40,7 @@ import { Interaction } from "../../../types/Executors";
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must enable Minecraft Data first."),
 				],
@@ -56,7 +56,7 @@ import { Interaction } from "../../../types/Executors";
 		if (!mcServer) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Server does not exist.")
 						.setDescription(
@@ -75,7 +75,7 @@ import { Interaction } from "../../../types/Executors";
 		if (!mcUser) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("User does not exist.")
 						.setDescription(
@@ -89,7 +89,7 @@ import { Interaction } from "../../../types/Executors";
 		await mcServerRepo.save(mcServer);
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("User added.")
 					.setDescription(
@@ -103,18 +103,18 @@ export default interaction; */
 
 const interaction: Interaction = {
 	name: "mc servers listusers",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "List all users of a Minecraft Server.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const name = interaction.options.getString("name");
 		const page = interaction.options.getInteger("page") ? (interaction.options.getInteger("page")! < 1) ? 1 : interaction.options.getInteger("page")! : 1;
 
 		if(!name) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a server name."),
 				],
@@ -124,7 +124,7 @@ const interaction: Interaction = {
 		if(!page) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a page."),
 				],
@@ -136,7 +136,7 @@ const interaction: Interaction = {
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must enable Minecraft Data first."),
 				],
@@ -152,7 +152,7 @@ const interaction: Interaction = {
 		if (!mcServer) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Server does not exist.")
 						.setDescription(
@@ -168,14 +168,18 @@ const interaction: Interaction = {
 		const start = (page - 1) * usersPerPage;
 		const end = start + usersPerPage;
 		const usersPage = users.slice(start, end);
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setTitle(`Users of ${mcServer.serverName}`)
 			.setDescription(
 				`Page ${page}/${pages}`
 			);
 		for (const user of usersPage) {
-			embed.addField(user.player.name, `<@${user.player.userId}>`);
+			//embed.addField(user.player.name, `<@${user.player.userId}>`);
+			embed.addFields({
+				name: user.player.name,
+				value: `<@${user.player.userId}>`,
+			});
 		}
 		interaction.reply({
 			embeds: [

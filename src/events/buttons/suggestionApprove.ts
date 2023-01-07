@@ -1,20 +1,21 @@
-import { ButtonInteraction, Message, MessageEmbed } from "discord.js";
-import Bot from "../../Bot";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { EventExecutor } from "../../types/Executors";
 
-export default async (client: Bot, interaction: ButtonInteraction) => {
+const e: EventExecutor<{ interaction: ButtonInteraction }> = async (client, params) => {
+	const { interaction } = params;
 	const id = interaction.customId.split("|")[1];
 	const guildSuggestionRepo = client.database.source.getRepository(GuildSuggestion);
 	const suggestion = await guildSuggestionRepo.findOne({ where: { id : parseInt(id) }, relations: ["config"] });
 	if (!suggestion) return interaction.reply({
 		embeds:[
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setTitle("Suggestion not found")
 				.setDescription("Please contact the bot's administrator.")
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]
 	});
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setTitle("Vote for this suggestion!")
 		.setDescription(`${suggestion.value}`)
 		.setFooter({
@@ -23,9 +24,9 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		})
 		.setColor(`#${client.config.defaultEmbedColor}`);
 	const channel = interaction.guild?.channels.cache.get(`${suggestion.config?.publicChannel}`);
-	if (!channel || !channel.isText()) return interaction.reply({
+	if (!channel || !channel.isTextBased()) return interaction.reply({
 		embeds:[
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setTitle("Channel not found")
 				.setDescription("Please contact the bot's administrator.")
 				.setColor(`#${client.config.defaultEmbedColor}`)
@@ -43,7 +44,7 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 
 	await interaction.reply({
 		embeds: [
-			new MessageEmbed()
+			new EmbedBuilder()
 				.setTitle("Suggestion Submitted!")
 				.setDescription(`${suggestion.value}`)
 				.setFooter({
@@ -53,7 +54,8 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]
 	});
-	if(interaction.message instanceof Message) {
+	if(interaction.message.deletable) {
 		await interaction.message.delete();
 	}
 };
+export default e;

@@ -1,20 +1,20 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "verify enabled",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify message enabled.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const guildDataRepo = client.database.source.getRepository(GuildData);
 		const guildData = await guildDataRepo.findOne({ where: { guildId:`${interaction.guildId}` } });
 		if(!guildData) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Guild Data not initialized")
 					.setDescription("Please initialize this server's data with /config init.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -33,7 +33,7 @@ const interaction: Interaction = {
 		}
 		await interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Verify Message Config")
 					.setDescription(`Verify message is now ${enabled ? "**enabled**" : "**disabled**"}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)

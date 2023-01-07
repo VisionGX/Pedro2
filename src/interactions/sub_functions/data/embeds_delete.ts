@@ -1,15 +1,15 @@
-import { CommandInteraction, MessageActionRow, MessageEmbed, MessageSelectMenu } from "discord.js";
+import { ChatInputCommandInteraction, ActionRowBuilder, EmbedBuilder, SelectMenuBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "embeds delete",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Delete an embed message.",
 	category: "data",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const repo = client.database.source.getRepository(GuildData);
 		const guildData = await repo.findOne({
 			where: {
@@ -19,7 +19,7 @@ const interaction: Interaction = {
 		});
 		if (!guildData) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Guild Data not initialized")
 					.setDescription("Please initialize this server's data with /config init.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -29,18 +29,18 @@ const interaction: Interaction = {
 		const { embeds } = guildData;
 		if (!embeds || embeds.length === 0) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embeds found")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]
 		});
 
-		const embedsEmbed = new MessageEmbed()
+		const embedsEmbed = new EmbedBuilder()
 			.setTitle("Delete Embed")
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setDescription("Select which embed you will delete.");
-		const row = new MessageActionRow();
-		const menu = new MessageSelectMenu();
+		const row = new ActionRowBuilder<SelectMenuBuilder>();
+		const menu = new SelectMenuBuilder();
 		for (const embed of embeds) {
 			const data = {
 				label: embed.name, 

@@ -1,10 +1,10 @@
-import { MessageActionRow, MessageEmbed, MessageSelectMenu, SelectMenuInteraction } from "discord.js";
+import { ActionRowBuilder, EmbedBuilder, SelectMenuBuilder, SelectMenuInteraction } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "menu embeds edit",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Edit an embed, as a menu option.",
 	category: "data",
 	internal_category: "sub",
@@ -12,7 +12,7 @@ const interaction: Interaction = {
 		const preId = interaction.values[0];
 		if(!preId) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embed selected")
 					.setDescription("Please select an embed to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -22,7 +22,7 @@ const interaction: Interaction = {
 		const id = parseInt(preId);
 		if(isNaN(id)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Invalid embed ID")
 					.setDescription("Please select a valid embed.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -33,20 +33,20 @@ const interaction: Interaction = {
 		const embed = await embedRepo.findOne({ where: { id: id } });
 		if(!embed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed not found")
 					.setDescription("Please select an embed to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
 			ephemeral: true
 		});
-		const emb = new MessageEmbed()
+		const emb = new EmbedBuilder()
 			.setTitle("Edit embed")
 			.setDescription("Select an option you will edit in this embed.")
 			.setColor(`#${client.config.defaultEmbedColor}`);
 
-		const row = new MessageActionRow();
-		const menu = new MessageSelectMenu();
+		const row = new ActionRowBuilder<SelectMenuBuilder>();
+		const menu = new SelectMenuBuilder();
 		menu.setCustomId(`embed_edit|${embed.id}`);
 		for (const [key,] of Object.entries(embed)){
 			if (key === "id" || key == "name" || key == "guildData") continue;

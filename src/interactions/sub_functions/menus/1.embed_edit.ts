@@ -1,10 +1,10 @@
-import { Message, MessageEmbed, SelectMenuInteraction, TextChannel } from "discord.js";
+import { Message, EmbedBuilder, SelectMenuInteraction, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "embed edit",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Edit the menu-selected embed.",
 	category: "data",
 	internal_category: "sub",
@@ -12,7 +12,7 @@ const interaction: Interaction = {
 		const id = interaction.customId.split("|")[1];
 		if(!id) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No embed selected")
 					.setDescription("Please select an embed to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -23,7 +23,7 @@ const interaction: Interaction = {
 		const embed = await embedRepo.findOne({ where: { id:parseInt(id) } });
 		if(!embed) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed not found")
 					.setDescription("Selected embed was not found.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -34,7 +34,7 @@ const interaction: Interaction = {
 		const option = interaction.values[0];
 		if(!option) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No option selected")
 					.setDescription("Please select an option to edit.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -44,7 +44,7 @@ const interaction: Interaction = {
 
 		if(!interaction.channel || !(interaction.channel instanceof TextChannel)) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Use a channel")
 					.setDescription("This menu must be used in a text channel.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -56,7 +56,7 @@ const interaction: Interaction = {
 			return client.interactions.get("embeds_manage_fields")?.execute(client, interaction);
 		}
 
-		const msgEmb = new MessageEmbed();
+		const msgEmb = new EmbedBuilder();
 		msgEmb.setTitle(`Editing embed [${embed.name}]`);
 		msgEmb.setColor(`#${client.config.defaultEmbedColor}`);
 		msgEmb.setFooter({ text: "Enter a single ¡ to mark it as empty" });
@@ -115,7 +115,7 @@ const interaction: Interaction = {
 		default:
 			return interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Invalid option")
 						.setDescription("Please select a valid option.")
 						.setColor(`#${client.config.defaultEmbedColor}`)
@@ -135,7 +135,7 @@ const interaction: Interaction = {
 		const msg = awaitMsg.first();
 		if(!msg) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("No message received")
 					.setDescription("No message was received in time. Cancelling.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -144,7 +144,7 @@ const interaction: Interaction = {
 		});
 		if(!validateRegex || (!validateRegex.test(msg.content) && msg.content === "¡")) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Invalid input")
 					.setDescription("Input was invalid. Cancelling.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -161,7 +161,7 @@ const interaction: Interaction = {
 		await embedRepo.save(embed);
 		return interaction.channel.send({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Embed edited")
 					.setDescription("Embed was edited successfully.")
 					.setColor(`#${client.config.defaultEmbedColor}`)

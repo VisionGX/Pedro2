@@ -1,5 +1,5 @@
-import { ApplicationCommandDataResolvable, Guild } from "discord.js";
-import Bot from "../../Bot";
+import { ApplicationCommandDataResolvable, ApplicationCommandType, Guild } from "discord.js";
+import { EventExecutor } from "../../types/Executors";
 
 interface CleanInteraction {
 	name: string;
@@ -8,13 +8,14 @@ interface CleanInteraction {
 	internal_category: string | null;
 }
 
-export default async (client: Bot, guild: Guild) => {
+const e: EventExecutor<{ guild?: Guild } | undefined> = async (client, params) => {
+	const guild = params?.guild;
 	if(!guild){
 		const arr:CleanInteraction[] = [];
 		for await (const [,interaction] of client.interactions.entries()) {
-			if(interaction.type === "SUB_FUNCTION") continue;
+			if(interaction.type === "SubFunction") continue;
 			const cleanInt:CleanInteraction = {...interaction};
-			cleanInt.description = (interaction.type == "USER" || interaction.type == "MESSAGE") ? undefined : interaction.description;
+			cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 			cleanInt.category = null;
 			if(cleanInt.internal_category == "app")arr.push(cleanInt);
 		}
@@ -28,9 +29,9 @@ export default async (client: Bot, guild: Guild) => {
 
 	const arr:CleanInteraction[] = [];
 	for await (const [,interaction] of client.interactions.entries()) {
-		if(interaction.type === "SUB_FUNCTION") continue;
+		if(interaction.type === "SubFunction") continue;
 		const cleanInt:CleanInteraction = {...interaction};
-		cleanInt.description = (interaction.type == "USER" || interaction.type == "MESSAGE") ? undefined : interaction.description;
+		cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 		cleanInt.category = null;
 		if(cleanInt.internal_category == "guild")arr.push(cleanInt);
 	}
@@ -42,3 +43,4 @@ export default async (client: Bot, guild: Guild) => {
 		console.log("Updated Interactions for", guild.name);
 	}
 };
+export default e;

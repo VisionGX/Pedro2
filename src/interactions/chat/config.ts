@@ -1,11 +1,11 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
 
 const interaction: Interaction = {
 	name: "config",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Configure the bot's behaviour in this server.",
 	category: "other",
 	internal_category: "guild",
@@ -13,17 +13,17 @@ const interaction: Interaction = {
 		{
 			name: "welcome",
 			description: "Welcome Configuration",
-			type: "SUB_COMMAND_GROUP",
+			type: ApplicationCommandOptionType.SubcommandGroup,
 			options: [
 				{
 					name: "enabled",
 					description: "Enable/Disable the welcome message.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "status",
 							description: "Is the welcome message enabled.",
-							type: "BOOLEAN",
+							type: ApplicationCommandOptionType.Boolean,
 							required: true,
 						}
 					]
@@ -31,12 +31,12 @@ const interaction: Interaction = {
 				{
 					name: "channel",
 					description: "Set the channel the welcome message will be sent to.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "welcome_channel",
 							description: "The channel the welcome message will be sent to.",
-							type: "CHANNEL",
+							type: ApplicationCommandOptionType.Channel,
 							required: true,
 						}
 					]
@@ -44,12 +44,12 @@ const interaction: Interaction = {
 				{
 					name: "message",
 					description: "Set the welcome message.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "name",
 							description: "The welcome message embed name.",
-							type: "STRING",
+							type: ApplicationCommandOptionType.String,
 							required: true,
 						}
 					]
@@ -59,17 +59,17 @@ const interaction: Interaction = {
 		{
 			name: "suggestions",
 			description: "Suggestions Configuration",
-			type: "SUB_COMMAND_GROUP",
+			type: ApplicationCommandOptionType.SubcommandGroup,
 			options: [
 				{
 					name: "enabled",
 					description: "Enable/Disable the suggestions.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "status",
 							description: "Is the suggest command enabled.",
-							type: "BOOLEAN",
+							type: ApplicationCommandOptionType.Boolean,
 							required: true,
 						}
 					]
@@ -77,18 +77,18 @@ const interaction: Interaction = {
 				{
 					name: "channels",
 					description: "Set the channel the welcome message will be sent to.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "admin_channel",
 							description: "The channel suggestions will be sent to be reviewed.",
-							type: "CHANNEL",
+							type: ApplicationCommandOptionType.Channel,
 							required: true,
 						},
 						{
 							name: "vote_channel",
 							description: "The channel suggestions will be sent to be voted for.",
-							type: "CHANNEL",
+							type: ApplicationCommandOptionType.Channel,
 							required: true,
 						}
 					]
@@ -98,17 +98,17 @@ const interaction: Interaction = {
 		{
 			name: "verify",
 			description: "Verification Configuration",
-			type: "SUB_COMMAND_GROUP",
+			type: ApplicationCommandOptionType.SubcommandGroup,
 			options: [
 				{
 					name: "enabled",
 					description: "Enable/Disable the verify message.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "status",
 							description: "Is the verify message enabled.",
-							type: "BOOLEAN",
+							type: ApplicationCommandOptionType.Boolean,
 							required: true,
 						}
 					]
@@ -116,12 +116,12 @@ const interaction: Interaction = {
 				{
 					name: "channel",
 					description: "Set the channel the verify message will be sent to.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "verify_channel",
 							description: "The channel the verify message will be sent to.",
-							type: "CHANNEL",
+							type: ApplicationCommandOptionType.Channel,
 							required: true,
 						}
 					]
@@ -129,12 +129,12 @@ const interaction: Interaction = {
 				{
 					name: "message",
 					description: "Set the welcome message.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "name",
 							description: "The verify message embed name.",
-							type: "STRING",
+							type: ApplicationCommandOptionType.String,
 							required: true,
 						}
 					]
@@ -142,12 +142,12 @@ const interaction: Interaction = {
 				{
 					name: "button_label",
 					description: "Set the button label.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "label",
 							description: "The button label.",
-							type: "STRING",
+							type: ApplicationCommandOptionType.String,
 							required: true,
 						}
 					]
@@ -155,12 +155,12 @@ const interaction: Interaction = {
 				{
 					name: "button_emoji",
 					description: "Set the button emoji.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "emoji",
 							description: "The button emoji.",
-							type: "STRING",
+							type: ApplicationCommandOptionType.String,
 							required: true,
 						}
 					]
@@ -168,12 +168,12 @@ const interaction: Interaction = {
 				{
 					name: "role",
 					description: "Set the role the user will be given when they verify.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "verified_role",
 							description: "The role the user will be given when they verify.",
-							type: "ROLE",
+							type: ApplicationCommandOptionType.Role,
 							required: true,
 						}
 					]
@@ -181,24 +181,24 @@ const interaction: Interaction = {
 				{
 					name: "send",
 					description: "Send the verification message to the configured channel.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 				}
 			],
 		},
 		{
 			name: "minecraft",
 			description: "Initialize the bot's behaviour in this server.",
-			type: "SUB_COMMAND_GROUP",
+			type: ApplicationCommandOptionType.SubcommandGroup,
 			options: [
 				{
 					name: "enabled",
 					description: "Enable/Disable the Minecraft server module.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "status",
 							description: "Is the Minecraft server module enabled.",
-							type: "BOOLEAN",
+							type: ApplicationCommandOptionType.Boolean,
 							required: true,
 						},
 					]
@@ -206,18 +206,18 @@ const interaction: Interaction = {
 				{
 					name: "log",
 					description: "Set Up the logging system.",
-					type: "SUB_COMMAND",
+					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "enabled",
 							description: "Enable/Disable the logging system.",
-							type: "BOOLEAN",
+							type: ApplicationCommandOptionType.Boolean,
 							required: true,
 						},
 						{
 							name: "channel",
 							description: "Set the channel the logging will be sent to.",
-							type: "CHANNEL",
+							type: ApplicationCommandOptionType.Channel,
 						},
 					]
 				}
@@ -226,12 +226,12 @@ const interaction: Interaction = {
 		{
 			name: "museum",
 			description: "Set a Museum dedicated Channel.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: "channel",
 					description: "Set the channel Museum Messages will be Saved to.",
-					type: "CHANNEL",
+					type: ApplicationCommandOptionType.Channel,
 					required: true,
 				}
 			]
@@ -239,12 +239,12 @@ const interaction: Interaction = {
 		{
 			name: "confessions",
 			description: "Set a Confessions dedicated Channel.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: "channel",
 					description: "Set the channel confession messages will be Sent to.",
-					type: "CHANNEL",
+					type: ApplicationCommandOptionType.Channel,
 					required: true,
 				}
 			]
@@ -252,17 +252,17 @@ const interaction: Interaction = {
 		{
 			name: "init",
 			description: "Initialize the bot's behaviour in this server.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 		}
 	],
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		if (
-			!interaction.memberPermissions?.has("MANAGE_GUILD") &&
-			!interaction.memberPermissions?.has("ADMINISTRATOR") &&
+			!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) &&
+			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) &&
 			!client.config.admins.includes(interaction.user.id)
 		) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("You do not have permission to use this command.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
@@ -280,7 +280,7 @@ const interaction: Interaction = {
 			}
 			return interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Successfully initialized.")
 						.setColor(`#${client.config.defaultEmbedColor}`)
 				],
@@ -294,7 +294,7 @@ const interaction: Interaction = {
 		const inter = client.interactions.get(`${group}_${category}`);
 		if (!inter) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Configuration not found")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			]

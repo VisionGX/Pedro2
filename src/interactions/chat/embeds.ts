@@ -1,10 +1,10 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import Bot from "../../Bot";
 import { Interaction } from "../../types/Executors";
 
 const interaction: Interaction = {
 	name: "embeds",
-	type: "CHAT_INPUT",
+	type: ApplicationCommandType.ChatInput,
 	description: "Manage this server's embeds.",
 	category: "other",
 	internal_category: "guild",
@@ -12,12 +12,12 @@ const interaction: Interaction = {
 		{
 			name: "create",
 			description: "Create an embed.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: "name",
 					description: "The embed name.",
-					type: "STRING",
+					type: ApplicationCommandOptionType.String,
 					required: true,
 				},
 			],
@@ -25,33 +25,33 @@ const interaction: Interaction = {
 		{
 			name: "edit",
 			description: "Edit an embed with an interactive menu.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 		},
 		{
 			name: "delete",
 			description: "Delete an embed.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 		},
 		{
 			name: "list",
 			description: "List this server's embeds.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 		},
 		{
 			name: "send",
 			description: "List this server's embeds.",
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: "embed",
 					description: "The embed to send.",
-					type: "STRING",
+					type: ApplicationCommandOptionType.String,
 					required: true,
 				},
 				{
 					name: "channel",
 					description: "The channel to send the embed to.",
-					type: "CHANNEL",
+					type: ApplicationCommandOptionType.Channel,
 					required: true,
 				}
 			],
@@ -59,14 +59,14 @@ const interaction: Interaction = {
 		},
 
 	],
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		if(
-			!interaction.memberPermissions?.has("MANAGE_GUILD") && 
-			!interaction.memberPermissions?.has("ADMINISTRATOR") &&
+			!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) && 
+			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) &&
 			!client.config.admins.includes(interaction.user.id)
 		) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("You do not have permission to use this command.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
@@ -92,7 +92,7 @@ const interaction: Interaction = {
 		default:
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setTitle("Command not found")
 						.setColor(`#${client.config.defaultEmbedColor}`)
 				]

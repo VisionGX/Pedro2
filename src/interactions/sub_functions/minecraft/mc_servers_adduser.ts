@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
@@ -8,18 +8,18 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "mc servers adduser",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Add a user to a Minecraft Server.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const name = interaction.options.getString("name");
 		const discord_user = interaction.options.getUser("user");
 
 		if(!name) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a server name."),
 				],
@@ -29,7 +29,7 @@ const interaction: Interaction = {
 		if(!discord_user) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide an user."),
 				],
@@ -41,7 +41,7 @@ const interaction: Interaction = {
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must enable Minecraft Data first."),
 				],
@@ -57,7 +57,7 @@ const interaction: Interaction = {
 		if (!mcServer) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Server does not exist.")
 						.setDescription(
@@ -76,7 +76,7 @@ const interaction: Interaction = {
 		if (!mcPlayer) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("User does not exist.")
 						.setDescription(
@@ -93,7 +93,7 @@ const interaction: Interaction = {
 		await mcServerRepo.save(mcServer);
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("User added.")
 					.setDescription(
