@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftLog from "../../../database/models/MinecraftLog";
@@ -6,16 +6,16 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "minecraft log",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the minecraft log system.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction ) {
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
 		const mcData = await mcDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if (!mcData || !mcData.enabled) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Minecraft Module not enabled")
 					.setDescription("Please enable the minecraft module first.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -25,7 +25,7 @@ const interaction: Interaction = {
 		const logChannel = interaction.options.getChannel("channel");
 		if (enabled && !logChannel) return interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Missing log channel")
 					.setDescription("Please provide a channel to log to.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
@@ -51,7 +51,7 @@ const interaction: Interaction = {
 		}
 		await interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Minecraft Logging Config")
 					.setDescription(`Minecraft Logging is now ${enabled ? "**enabled**" : "**disabled**"}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)

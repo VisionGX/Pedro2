@@ -1,4 +1,4 @@
-import { AnySelectMenuInteraction, ApplicationCommandOption, ApplicationCommandType, CommandInteraction, Message, ModalSubmitInteraction } from "discord.js";
+import { AnySelectMenuInteraction, ApplicationCommandOption, ApplicationCommandType, ChatInputCommandInteraction, Message, ModalSubmitInteraction } from "discord.js";
 import Bot from "../Bot";
 
 interface Command {
@@ -16,7 +16,7 @@ interface Interaction {
 	category: string;
 	internal_category: "app" | "guild" | "sub";
 	options?: ApplicationCommandOption[];
-	execute<T = CommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
+	execute<T = ChatInputCommandInteraction>(client: Bot, interaction: T):Promise<unknown>;
 	execute<T = AnySelectMenuInteraction>(client: Bot, interaction: T):Promise<unknown>;
 	execute<T = ModalSubmitInteraction>(client: Bot, interaction: T):Promise<unknown>;
 }

@@ -1,4 +1,4 @@
-import { CommandInteraction, ActionRowBuilder, EmbedBuilder, SelectMenuBuilder } from "discord.js";
+import { ChatInputCommandInteraction, ActionRowBuilder, EmbedBuilder, SelectMenuBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
@@ -9,7 +9,7 @@ const interaction: Interaction = {
 	description: "Edit an embed message.",
 	category: "data",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const repo = client.database.source.getRepository(GuildData);
 		const guildData = await repo.findOne({
 			where: {

@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
@@ -6,18 +6,18 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "mc users add",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Add a Minecraft User to the registry.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const discord_user = interaction.options.getUser("discord_user");
 		const username = interaction.options.getString("username");
 
 		if(!discord_user) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a discord user."),
 				],
@@ -27,7 +27,7 @@ const interaction: Interaction = {
 		if(!username) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a username."),
 				],
@@ -39,7 +39,7 @@ const interaction: Interaction = {
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must enable Minecraft Data first."),
 				],
@@ -55,7 +55,7 @@ const interaction: Interaction = {
 		if (mcUser) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("User already exists.")
 						.setDescription(
@@ -72,7 +72,7 @@ const interaction: Interaction = {
 		});
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("User added.")
 					.setDescription(

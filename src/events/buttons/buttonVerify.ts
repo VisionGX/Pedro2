@@ -1,11 +1,11 @@
 import Captcha from "@haileybot/captcha-generator";
-import { ButtonInteraction, GuildMember, Message, MessageAttachment, EmbedBuilder } from "discord.js";
+import { ButtonInteraction, GuildMember, Message, AttachmentBuilder, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildVerify from "../../database/models/GuildVerify";
 import { EventExecutor } from "../../types/Executors";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-const e: EventExecutor<{interaction:ButtonInteraction}> = async (client: Bot, params) => {
+const e: EventExecutor<{ interaction: ButtonInteraction }> = async (client: Bot, params) => {
 	const { interaction } = params;
 	if (interaction.user.bot) return client.logger.info(`Verify ${interaction.user.tag} is a bot, ignoring`);
 	try {
@@ -38,7 +38,7 @@ const e: EventExecutor<{interaction:ButtonInteraction}> = async (client: Bot, pa
 		//interaction.deferUpdate();
 
 		const captcha = new Captcha();
-		const attach = new MessageAttachment(captcha.JPEGStream, "captcha.jpeg");
+		const attach = new AttachmentBuilder(captcha.JPEGStream, { name: "captcha.jpeg" });
 		const message = await interaction.member.send({
 			embeds: [
 				new EmbedBuilder()

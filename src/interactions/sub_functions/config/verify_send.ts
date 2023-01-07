@@ -1,4 +1,4 @@
-import { CommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, TextChannel, PermissionFlagsBits, ButtonStyle } from "discord.js";
+import { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, TextChannel, PermissionFlagsBits, ButtonStyle } from "discord.js";
 import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
@@ -10,7 +10,7 @@ const interaction: Interaction = {
 	description: "Send the verify message.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const verifyRepo = client.database.source.getRepository(GuildVerify);
 		const verify = await verifyRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if (!verify) return interaction.reply({

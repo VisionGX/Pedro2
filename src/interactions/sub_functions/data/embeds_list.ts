@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import { Interaction } from "../../../types/Executors";
@@ -9,7 +9,7 @@ const interaction: Interaction = {
 	description: "Lists this server's Embeds.",
 	category: "data",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const guildDataRepo = client.database.source.getRepository(GuildData);
 		const guildData = await guildDataRepo.findOne({ where: { guildId: interaction.guild?.id }, relations: ["embeds"] });
 		if(!guildData) return interaction.reply({

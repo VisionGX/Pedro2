@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildSuggest from "../../../database/models/GuildSuggest";
 import { Interaction } from "../../../types/Executors";

@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftServer from "../../../database/models/MinecraftServer";
@@ -6,18 +6,18 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "mc servers create",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Create a Minecraft Server.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const identifier = interaction.options.getString("identifier");
 		const name = interaction.options.getString("name");
 
 		if(!identifier) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide an identifier."),
 				],
@@ -27,7 +27,7 @@ const interaction: Interaction = {
 		if(!name) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must provide a name."),
 				],
@@ -39,7 +39,7 @@ const interaction: Interaction = {
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("You must enable Minecraft Data first."),
 				],
@@ -56,7 +56,7 @@ const interaction: Interaction = {
 		if (mcServer) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setTitle("Server already exists.")
 						.setDescription(
@@ -73,7 +73,7 @@ const interaction: Interaction = {
 		});
 		interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setColor(`#${client.config.defaultEmbedColor}`)
 					.setTitle("Server created.")
 					.setDescription(

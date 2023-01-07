@@ -1,4 +1,4 @@
-import { ApplicationCommandType, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandType, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import { Interaction } from "../../types/Executors";
 const interaction:Interaction = {
@@ -7,7 +7,7 @@ const interaction:Interaction = {
 	description: "Checks the bot's ping",
 	category: "other",
 	internal_category: "app",
-	async execute(client:Bot, interaction:CommandInteraction) {
+	async execute(client:Bot, interaction:ChatInputCommandInteraction) {
 		interaction.reply({
 			embeds: [
 				new EmbedBuilder()

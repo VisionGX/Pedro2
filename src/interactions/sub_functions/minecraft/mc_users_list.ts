@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import MinecraftData from "../../../database/models/MinecraftData";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
@@ -6,17 +6,17 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "mc users list",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "List all Minecraft Users.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
 		const mcData= await mcDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
 		if(!mcData) {
 			interaction.reply({
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setColor(`#${client.config.defaultEmbedColor}`)
 						.setDescription("No Minecraft data found."),
 				],
@@ -32,11 +32,16 @@ const interaction: Interaction = {
 		});
 		// We trim the page to be 25 users per page.
 		const trimmedUsers = mcUsers.slice((page - 1) * 25, page * 25);
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(`#${client.config.defaultEmbedColor}`)
 			.setTitle("Minecraft Users");
 		trimmedUsers.forEach((user) => {
-			embed.addField(user.name, `<@${user.userId}>`);
+			//embed.addField(user.name, `<@${user.userId}>`);
+			embed.addFields({
+				name: user.name,
+				value: `<@${user.userId}>`,
+				inline: true,
+			});
 		});
 		interaction.reply({
 			embeds: [embed],

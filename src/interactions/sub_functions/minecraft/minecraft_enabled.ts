@@ -1,15 +1,15 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import MinecraftData from "../../../database/models/MinecraftData";
 import { Interaction } from "../../../types/Executors";
 const interaction: Interaction = {
 	name: "minecraft enabled",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the Minecraft module enabled.",
 	category: "config",
 	internal_category: "sub",
-	async execute(client: Bot, interaction: CommandInteraction) {
+	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
 		const enabled = interaction.options.getBoolean("status") || false;
@@ -24,7 +24,7 @@ const interaction: Interaction = {
 		}
 		await interaction.reply({
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setTitle("Minecraft Module Config")
 					.setDescription(`Minecraft Module is now ${enabled ? "**enabled**" : "**disabled**"}`)
 					.setColor(`#${client.config.defaultEmbedColor}`)

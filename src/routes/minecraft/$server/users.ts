@@ -1,4 +1,4 @@
-import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder } from "discord.js";
 import { Response } from "express";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
 import MinecraftServer from "../../../database/models/MinecraftServer";
