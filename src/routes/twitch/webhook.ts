@@ -12,9 +12,11 @@ export default {
 	async post(req: ServerRequest, res: Response) {
 		if(!req.headers["twitch-eventsub-message-type"]) return res.status(400).json({ err: true, code: 400, message: "Bad Request!" });
 		if(req.headers["twitch-eventsub-message-type"] === TWITCH_NOTIFICATION_MESSAGE_TYPE) {
+			req.parentApp.logger.info("Twitch Notification Received");
 			doWebhookBehavior(req, res);
 		} else
 		if(req.headers["twitch-eventsub-message-type"] === TWITCH_CHALLENGE_MESSAGE_TYPE) {
+			req.parentApp.logger.info("Twitch Challenge Received");
 			doCallbackBehavior(req, res);
 		}
 		else {
