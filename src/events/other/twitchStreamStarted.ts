@@ -7,13 +7,15 @@ const e: EventExecutor<never> = async (client) => {
 	const channel = await client.channels.fetch(channelId);
 	if (!channel) return client.logger.error("Twitch Stream Started Channel not found");
 	if (!channel.isTextBased()) return client.logger.error("Twitch Stream Started Channel is not a text channel");
-	const embed = new EmbedBuilder()
+	/* const embed = new EmbedBuilder()
 		.setTitle(process.env.TWITCH_STREAM_STARTED_TITLE?.replace("#", " ") || "Stream Started")
 		.setTimestamp(new Date())
 		.setColor(`#${client.config.defaultEmbedColor}`);
 	await channel.send({
 		content: `https://twitch.tv/${process.env.TWITCH_USERNAME?.replace("#", " ")}`,
 		embeds: [embed],
-	});
+	}); */
+	const replaceHashRegex = /#/g;
+	await channel.send(`${process.env.TWITCH_STREAM_STARTED_TITLE?.replace(replaceHashRegex, " ") || "Stream Started"}\nhttps://twitch.tv/${process.env.TWITCH_USERNAME?.replace(replaceHashRegex, " ")}`);
 };
 export default e;

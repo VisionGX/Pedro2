@@ -100,6 +100,8 @@ const doWebhookBehavior = async (req: ServerRequest, res: Response) => {
 	if (req.body.event.type === TYPE_TWITCH_STREAM_LIVE) {
 		req.parentApp.emit("twitchStreamStarted");
 	}
-	req.parentApp.logger.info("Twitch Notification Received but not handled");
-	req.parentApp.logger.debug(req.body);
+	else {
+		req.parentApp.logger.info("Twitch Notification Received but not handled");
+		req.parentApp.logger.debug(req.body);
+	}
 }
