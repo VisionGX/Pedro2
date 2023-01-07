@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildData from "../../../database/models/GuildData";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "embeds create",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Create an embed message.",
 	category: "data",
 	internal_category: "sub",

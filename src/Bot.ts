@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Client, Collection, GatewayIntentBits } from "discord.js";
 import { Command, Interaction, Job } from "./types/Executors";
-import * as fs from "fs";
 import Schedule from "node-schedule";
 import SPDatabase from "./database";
 import { Log } from "./util/Logger";
@@ -9,37 +8,49 @@ import { BotConfig } from "./types/Config";
 import API from "./API";
 import { JSONPackage } from "./types/JSONPackage";
 import CLI from "./cli/CLI";
+import findRecursive from "@spaceproject/findrecursive";
 
+const nonPrivilegedIntents = [
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildBans,
+	GatewayIntentBits.GuildEmojisAndStickers,
+	GatewayIntentBits.GuildIntegrations,
+	GatewayIntentBits.GuildWebhooks,
+	GatewayIntentBits.GuildInvites,
+	GatewayIntentBits.GuildVoiceStates,
+	GatewayIntentBits.GuildPresences,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.GuildMessageReactions,
+	GatewayIntentBits.GuildMessageTyping,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.DirectMessageReactions,
+	GatewayIntentBits.DirectMessageTyping,
+	GatewayIntentBits.GuildScheduledEvents
+];
+const privilegedIntents = [
+	GatewayIntentBits.MessageContent
+];
+let intents: GatewayIntentBits[] = [];
 class Bot extends Client {
 	logger: Log.Logger;
-	config: BotConfig;
+	readonly config: BotConfig;
 	commands: Collection<string, Command>;
 	interactions: Collection<string, Interaction>;
 	jobs: Collection<string, Job>;
-	database: SPDatabase;
-	server: API;
-	commandline:CLI;
+	readonly database: SPDatabase;
+	readonly server: API;
+	readonly commandline: CLI;
 	readonly package: JSONPackage;
 	constructor() {
+		if (process.env.NODE_ENV === "development") {
+			intents = nonPrivilegedIntents.concat(privilegedIntents);
+		}
+		else {
+			intents = nonPrivilegedIntents;
+		}
 		super({
-			intents: [
-				GatewayIntentBits.Guilds,
-				GatewayIntentBits.GuildMembers,
-				GatewayIntentBits.GuildBans,
-				GatewayIntentBits.GuildEmojisAndStickers,
-				GatewayIntentBits.GuildIntegrations,
-				GatewayIntentBits.GuildWebhooks,
-				GatewayIntentBits.GuildInvites,
-				GatewayIntentBits.GuildVoiceStates,
-				GatewayIntentBits.GuildPresences,
-				GatewayIntentBits.GuildMessages,
-				GatewayIntentBits.GuildMessageReactions,
-				GatewayIntentBits.GuildMessageTyping,
-				GatewayIntentBits.DirectMessages,
-				GatewayIntentBits.DirectMessageReactions,
-				GatewayIntentBits.DirectMessageTyping,
-				GatewayIntentBits.GuildScheduledEvents
-			]
+			intents
 		});
 		this.logger = new Log.Logger();
 		this.commands = new Collection();
@@ -52,47 +63,36 @@ class Bot extends Client {
 		this.package = require("../package.json");
 	}
 	async registerEvents() {
-		fs.readdirSync(`${__dirname}/events`).forEach(dir => {
-			fs.readdirSync(`${__dirname}/events/${dir}`).forEach(file => {
-				const event = require(`./events/${dir}/${file}`).default;
-				this.logger.info(`Loading Event ${file}`);
-				this.on(file.split(".")[0], event.bind(null, this));
-			});
-		});
+		const events = await findRecursive(`${__dirname}/events`);
+		for (const [file, dir] of events) {
+			const event: VoidFunction = await import(`${dir}/${file}`).then(m => m.default);
+			this.logger.info(`Loading Event ${file}`);
+			this.on(file.split(".")[0], event.bind(null, this));
+		}
 	}
 	async loadCommands() {
-		fs.readdirSync(`${__dirname}/commands`).forEach(dir => {
-			fs.readdirSync(`${__dirname}/commands/${dir}`).forEach(file => {
-				const command: Command = require(`./commands/${dir}/${file}`).default;
-				this.logger.info(`Loading Command ${file}`);
-				this.commands.set(command.name, command);
-			});
-		});
+		const commands = await findRecursive(`${__dirname}/commands`);
+		for (const [file, dir] of commands) {
+			const command: Command = await import(`${dir}/${file}`).then(m => m.default);
+			this.logger.info(`Loading Command ${file}`);
+			this.commands.set(command.name, command);
+		}
 	}
 	async loadInteractions() {
-		fs.readdirSync(`${__dirname}/interactions`).forEach(dir => {
-			const interactions = fs.readdirSync(`${__dirname}/interactions/${dir}`).filter(file => file.endsWith(".js"));
-			interactions.forEach(file => {
-				const interaction = require(`./interactions/${dir}/${file}`).default;
-				this.logger.info(`Loading Interaction ${file}`);
-				this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
-			});
-			fs.readdirSync(`${__dirname}/interactions/${dir}`).filter(file => !file.endsWith(".js")).forEach(subdir => {
-				const subinteractions = fs.readdirSync(`${__dirname}/interactions/${dir}/${subdir}`).filter(file => file.endsWith(".js"));
-				subinteractions.forEach(file => {
-					const interaction: Interaction = require(`./interactions/${dir}/${subdir}/${file}`).default;
-					this.logger.info(`Loading Interaction ${file}`);
-					this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
-				});
-			});
-		});
+		const interactions = await findRecursive(`${__dirname}/interactions`);
+		for (const [file, dir] of interactions) {
+			const interaction: Interaction = await import(`${dir}/${file}`).then(m => m.default);
+			this.logger.info(`Loading Interaction ${file}`);
+			this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
+		}
 	}
 	async loadJobs() {
-		fs.readdirSync(`${__dirname}/jobs`).forEach(file => {
-			const job: Job = require(`./jobs/${file}`).default;
+		const jobs = await findRecursive(`${__dirname}/jobs`);
+		for (const [file, dir] of jobs) {
+			const job: Job = await import(`${dir}/${file}`).then(m => m.default);
 			this.logger.info(`Loading Job ${file}`);
 			this.jobs.set(job.name, job);
-		});
+		}
 	}
 	async startJobs() {
 		this.jobs.forEach(job => {

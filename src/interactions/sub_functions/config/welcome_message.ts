@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildWelcome from "../../../database/models/GuildWelcome";
 import DatabaseEmbed from "../../../database/models/MessageEmbed";
@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "welcome message",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the welcome message embed.",
 	category: "config",
 	internal_category: "sub",

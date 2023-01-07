@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import DatabaseEmbed from "../../../database/models/MessageEmbed";
@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "verify message",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify message embed.",
 	category: "config",
 	internal_category: "sub",

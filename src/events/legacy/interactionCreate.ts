@@ -3,10 +3,10 @@ import Bot from "../../Bot";
 
 export default async (client: Bot, interaction:Interaction) => {
 	
-	if(interaction.isButton()) return client.emit(interaction.customId.split("|")[0], interaction);
+	if(interaction.isButton()) return client.emit(interaction.customId.split("|")[0], {interaction});
 
 	let inter = null;
-	if(interaction.isSelectMenu()) {
+	if(interaction.isAnySelectMenu()) {
 		inter = client.interactions.get(interaction.customId.split("|")[0]);
 		if(!inter) client.logger.warn(`No interaction found for Menu ${interaction.customId}`);
 	}

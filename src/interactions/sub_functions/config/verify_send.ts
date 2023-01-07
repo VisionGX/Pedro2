@@ -6,7 +6,7 @@ import { buildEmbedFrom } from "../../../util/Functions";
 
 const interaction: Interaction = {
 	name: "verify send",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Send the verify message.",
 	category: "config",
 	internal_category: "sub",

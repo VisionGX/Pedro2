@@ -6,7 +6,7 @@ import { Interaction } from "../../../types/Executors";
 type tuple = [string, string];
 const interaction: Interaction = {
 	name: "embeds edit fields",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Edit the menu-selected embed fields.",
 	category: "data",
 	internal_category: "sub",

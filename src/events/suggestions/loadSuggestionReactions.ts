@@ -1,9 +1,9 @@
 import { MessageReaction } from "discord.js";
-import Bot from "../../Bot";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { EventExecutor } from "../../types/Executors";
 
 
-export default async (client: Bot) => {
+const e: EventExecutor<never> = async (client) => {
 	const guildSuggestionRepository = client.database.source.getRepository(GuildSuggestion);
 	const guildSuggestions = await guildSuggestionRepository.find({relations: ["config"]});
 	for await (const guildSuggestion of guildSuggestions) {
@@ -29,3 +29,4 @@ export default async (client: Bot) => {
 		await guildSuggestionRepository.save({...guildSuggestion});
 	}
 };
+export default e;

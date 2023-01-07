@@ -13,4 +13,7 @@ export default async (client: Bot) => {
 	});
 
 	client.logger.info("App Started");
+
+	// Chain OnReady Events
+	client.emit("loadSuggestionReactions");
 };

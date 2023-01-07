@@ -1,5 +1,5 @@
 import { ApplicationCommandDataResolvable, ApplicationCommandType, Guild } from "discord.js";
-import Bot from "../../Bot";
+import { EventExecutor } from "../../types/Executors";
 
 interface CleanInteraction {
 	name: string;
@@ -8,11 +8,12 @@ interface CleanInteraction {
 	internal_category: string | null;
 }
 
-export default async (client: Bot, guild: Guild) => {
+const e: EventExecutor<{ guild?: Guild } | undefined> = async (client, params) => {
+	const guild = params?.guild;
 	if(!guild){
 		const arr:CleanInteraction[] = [];
 		for await (const [,interaction] of client.interactions.entries()) {
-			if(interaction.type === "SUB_FUNCTION") continue;
+			if(interaction.type === "SubFunction") continue;
 			const cleanInt:CleanInteraction = {...interaction};
 			cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 			cleanInt.category = null;
@@ -28,7 +29,7 @@ export default async (client: Bot, guild: Guild) => {
 
 	const arr:CleanInteraction[] = [];
 	for await (const [,interaction] of client.interactions.entries()) {
-		if(interaction.type === "SUB_FUNCTION") continue;
+		if(interaction.type === "SubFunction") continue;
 		const cleanInt:CleanInteraction = {...interaction};
 		cleanInt.description = (interaction.type == ApplicationCommandType.User || interaction.type == ApplicationCommandType.Message) ? undefined : interaction.description;
 		cleanInt.category = null;
@@ -42,3 +43,4 @@ export default async (client: Bot, guild: Guild) => {
 		console.log("Updated Interactions for", guild.name);
 	}
 };
+export default e;

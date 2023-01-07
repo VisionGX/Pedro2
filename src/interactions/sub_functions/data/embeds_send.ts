@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildMessageEmbed from "../../../database/models/MessageEmbed";
 import { Interaction } from "../../../types/Executors";
@@ -6,7 +6,7 @@ import { buildEmbedFrom } from "../../../util/Functions";
 
 const interaction: Interaction = {
 	name: "embeds send",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Send an embed message to the specified channel.",
 	category: "data",
 	internal_category: "sub",

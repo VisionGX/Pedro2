@@ -2,9 +2,11 @@ import Captcha from "@haileybot/captcha-generator";
 import { ButtonInteraction, GuildMember, Message, MessageAttachment, EmbedBuilder } from "discord.js";
 import Bot from "../../Bot";
 import GuildVerify from "../../database/models/GuildVerify";
+import { EventExecutor } from "../../types/Executors";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-export default async (client: Bot, interaction: ButtonInteraction) => {
+const e: EventExecutor<{interaction:ButtonInteraction}> = async (client: Bot, params) => {
+	const { interaction } = params;
 	if (interaction.user.bot) return client.logger.info(`Verify ${interaction.user.tag} is a bot, ignoring`);
 	try {
 		const verifyRepo = client.database.source.getRepository(GuildVerify);
@@ -83,3 +85,4 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 		client.logger.error("Error in buttonVerify.ts", e);
 	}
 };
+export default e;

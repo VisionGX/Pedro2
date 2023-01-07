@@ -50,10 +50,10 @@ class API {
 		const globalDirName = `${__dirname}/routes`.replace(/\\/g, "/");
 		const fileRoutes = await findRecursive(globalDirName);
 
-		for (const filePair of fileRoutes) {
-			if (!filePair[0].endsWith(".js")) continue;
-			const { default: route } = await import(`${filePair[1]}/${filePair[0]}`);
-			const serverRoute = `${filePair[1].replace(globalDirName, "")}/${filePair[0].split(".")[0]}`.replace(/\$/g, ":");
+		for(const [file,dir] of fileRoutes) {
+			if (!file.endsWith(".js")) continue;
+			const { default: route } = await import(`${dir}/${file}`);
+			const serverRoute = `${dir.replace(globalDirName, "")}/${file.split(".")[0]}`.replace(/\$/g, ":");
 			this.client.logger.info(`Registering route ${serverRoute}`);
 			const Iroute = this.server.route(serverRoute);
 			// Register the route methods
@@ -63,6 +63,7 @@ class API {
 			route.delete ? Iroute.delete(route.delete) : null;
 			route.patch ? Iroute.patch(route.patch) : null;
 		}
+
 		// Register html, css, and js files
 		this.server.use(express.static(`${__dirname}/../src/public`));
 		this.server.get("*", (_req, res) => {

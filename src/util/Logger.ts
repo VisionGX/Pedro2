@@ -1,6 +1,10 @@
 /* eslint-disable */
 import winston from "winston";
 
+function getLogDate() {
+	const date = new Date();
+	return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
 export namespace Log {
 	export class Logger {
 		private static instance: Logger | null = null;
@@ -9,14 +13,14 @@ export namespace Log {
 			if(Logger.instance) 
 				return Logger.instance;
 			this.logger = winston.createLogger({
-				level: process.env.DEBUG == "1" ? "debug": "info",
+				level: process.env.NODE_ENV === "development" ? "debug" : "info",
 				format: winston.format.json(),
 				transports: [
 					new winston.transports.Console({
 						format: winston.format.simple(),
 					}),
 					new winston.transports.File({
-						filename: "./temp/logs/sp.log",
+						filename: `./temp/logs/${getLogDate}.log`,
 						format: winston.format.simple(),
 					}),
 				],

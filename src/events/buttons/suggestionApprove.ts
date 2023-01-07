@@ -1,8 +1,9 @@
-import { ButtonInteraction, Message, EmbedBuilder } from "discord.js";
-import Bot from "../../Bot";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { EventExecutor } from "../../types/Executors";
 
-export default async (client: Bot, interaction: ButtonInteraction) => {
+const e: EventExecutor<{ interaction: ButtonInteraction }> = async (client, params) => {
+	const { interaction } = params;
 	const id = interaction.customId.split("|")[1];
 	const guildSuggestionRepo = client.database.source.getRepository(GuildSuggestion);
 	const suggestion = await guildSuggestionRepo.findOne({ where: { id : parseInt(id) }, relations: ["config"] });
@@ -53,7 +54,8 @@ export default async (client: Bot, interaction: ButtonInteraction) => {
 				.setColor(`#${client.config.defaultEmbedColor}`)
 		]
 	});
-	if(interaction.message instanceof Message) {
+	if(interaction.message.deletable) {
 		await interaction.message.delete();
 	}
 };
+export default e;

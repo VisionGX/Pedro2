@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
 import Bot from "../../../Bot";
 import GuildWelcome from "../../../database/models/GuildWelcome";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "welcome channel",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the welcome message channel.",
 	category: "config",
 	internal_category: "sub",

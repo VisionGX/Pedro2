@@ -1,9 +1,10 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
-import Bot from "../../Bot";
 import GuildSuggestion from "../../database/models/GuildSuggestion";
+import { EventExecutor } from "../../types/Executors";
 
 
-export default async (client: Bot, suggestion: GuildSuggestion) => {
+const e: EventExecutor<{ suggestion: GuildSuggestion }> = async (client, params) => {
+	const { suggestion } = params;
 	const guildSuggestionRepo = client.database.source.getRepository(GuildSuggestion);
 	await guildSuggestionRepo.save(suggestion);
 
@@ -42,3 +43,4 @@ export default async (client: Bot, suggestion: GuildSuggestion) => {
 	suggestion.activeMessageId = msg.id;
 	await guildSuggestionRepo.save(suggestion);
 };
+export default e;

@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import GuildVerify from "../../../database/models/GuildVerify";
 import { Interaction } from "../../../types/Executors";
 
 const interaction: Interaction = {
 	name: "verify button emoji",
-	type: "SUB_FUNCTION",
+	type: "SubFunction",
 	description: "Configure the verify button emoji.",
 	category: "config",
 	internal_category: "sub",
