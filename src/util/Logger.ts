@@ -20,7 +20,7 @@ export namespace Log {
 						format: winston.format.simple(),
 					}),
 					new winston.transports.File({
-						filename: `./temp/logs/${getLogDate}.log`,
+						filename: `./temp/logs/${getLogDate()}.log`,
 						format: winston.format.simple(),
 					}),
 				],
