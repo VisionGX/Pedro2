@@ -46,6 +46,7 @@ class API {
 
 		for(const [file,dir] of fileRoutes) {
 			if (!file.endsWith(".js")) continue;
+			if (file.endsWith(".map")) continue;
 			const { default: route } = await import(`${dir}/${file}`);
 			const serverRoute = `${dir.replace(globalDirName, "")}/${file.split(".")[0]}`.replace(/\$/g, ":");
 			this.client.logger.info(`Registering route ${serverRoute}`);
