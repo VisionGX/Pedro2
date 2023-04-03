@@ -65,6 +65,7 @@ class Bot extends Client {
 	async registerEvents() {
 		const events = await findRecursive(`${__dirname}/events`);
 		for (const [file, dir] of events) {
+			if (file.endsWith(".map")) continue;
 			const event: VoidFunction = await import(`${dir}/${file}`).then(m => m.default);
 			this.logger.info(`Loading Event ${file}`);
 			this.on(file.split(".")[0], event.bind(null, this));
@@ -73,6 +74,7 @@ class Bot extends Client {
 	async loadCommands() {
 		const commands = await findRecursive(`${__dirname}/commands`);
 		for (const [file, dir] of commands) {
+			if (file.endsWith(".map")) continue;
 			const command: Command = await import(`${dir}/${file}`).then(m => m.default);
 			this.logger.info(`Loading Command ${file}`);
 			this.commands.set(command.name, command);
@@ -81,6 +83,7 @@ class Bot extends Client {
 	async loadInteractions() {
 		const interactions = await findRecursive(`${__dirname}/interactions`);
 		for (const [file, dir] of interactions) {
+			if (file.endsWith(".map")) continue;
 			const interaction: Interaction = await import(`${dir}/${file}`).then(m => m.default);
 			this.logger.info(`Loading Interaction ${file}`);
 			this.interactions.set(interaction.name.replace(/\s/g, "_"), interaction);
@@ -89,6 +92,7 @@ class Bot extends Client {
 	async loadJobs() {
 		const jobs = await findRecursive(`${__dirname}/jobs`);
 		for (const [file, dir] of jobs) {
+			if (file.endsWith(".map")) continue;
 			const job: Job = await import(`${dir}/${file}`).then(m => m.default);
 			this.logger.info(`Loading Job ${file}`);
 			this.jobs.set(job.name, job);
