@@ -2,13 +2,13 @@ import { MessageContextMenuCommandInteraction, EmbedBuilder, PermissionFlagsBits
 import Bot from "../../Bot";
 import GuildData from "../../database/models/GuildData";
 import { Interaction } from "../../types/Executors";
-const interaction:Interaction = {
+const interaction: Interaction = {
 	name: "send to museum",
 	type: ApplicationCommandType.Message,
 	description: "Sends a message with attachments to the museum",
 	category: "other",
 	internal_category: "guild",
-	async execute(client:Bot, interaction:MessageContextMenuCommandInteraction) {
+	async execute(client: Bot, interaction: MessageContextMenuCommandInteraction) {
 		if (
 			!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) &&
 			!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator) &&
@@ -48,7 +48,7 @@ const interaction:Interaction = {
 			ephemeral: true
 		});
 		let attachments: Attachment[] | undefined = [];
-		if (msgAttachments.size){
+		if (msgAttachments.size) {
 			for await (const [, attachment] of msgAttachments) {
 				attachments.push(attachment);
 			}
@@ -73,17 +73,19 @@ const interaction:Interaction = {
 			],
 			ephemeral: true
 		});
-		const content = targetMessage?.content || "";
-		const embeds : EmbedBuilder[] = [];
+		const content = targetMessage?.content || null;
+		const embeds: EmbedBuilder[] = [];
 		for (const attachment of attachments) {
-			embeds.push(new EmbedBuilder()
-				.setAuthor({name: targetMessage?.author?.tag, iconURL: targetMessage?.author?.displayAvatarURL()})
-				.setDescription(`${content}`)
+			const e = new EmbedBuilder()
+				.setAuthor({ name: targetMessage?.author?.tag, iconURL: targetMessage?.author?.displayAvatarURL() })
 				.setColor(`#${client.config.defaultEmbedColor}`)
-				.setImage(attachment.proxyURL)
+				.setImage(attachment.proxyURL);
+				if (content) e.setDescription(content);
+			embeds.push(
+				e
 			);
 		}
-		await channel.send({embeds}).catch(() => null);
+		await channel.send({ embeds }).catch(() => null);
 		return interaction.reply({
 			embeds: [
 				new EmbedBuilder()
@@ -93,7 +95,7 @@ const interaction:Interaction = {
 			],
 			ephemeral: true
 		});
-		
+
 	}
 };
 export default interaction;
