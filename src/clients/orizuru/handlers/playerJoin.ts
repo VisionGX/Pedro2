@@ -59,7 +59,8 @@ const handler: Handler<HandlerFunction<Bot, "PlayerJoin">> = {
 		const embed = new EmbedBuilder()
 			.setTitle(`Player ${data.body.args.player.name} joined the server!`)
 			.setDescription(data.body.content || "No content")
-			.setTimestamp();
+			.setTimestamp()
+			.setColor(`#${client.config.defaultEmbedColor}`);
 
 		for await (const [key, arg] of Object.entries(data.body.args.player)) {
 			if (key === "ip") continue;

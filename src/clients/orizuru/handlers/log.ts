@@ -55,9 +55,10 @@ const handler: Handler<HandlerFunction<Bot, "Log">> = {
 		}
 
 		const embed = new EmbedBuilder()
-			.setTitle(`Minecraft Server Log for ${data.body.content_type}`)
+			.setTitle(`Minecraft Server Log`)
 			.setDescription(data.body.content || "No content")
-			.setTimestamp();
+			.setTimestamp()
+			.setColor(`#${client.config.defaultEmbedColor}`);
 
 		embed.addFields([
 			{ name: "Server Name", value: `${data.body.args.serverName || "Not Received"}` },
