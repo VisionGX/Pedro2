@@ -15,6 +15,12 @@ export default class MinecraftLog {
 		length: "20",
 	})
 		channelId?: string;
+	
+	@Column({
+		nullable: true,
+		type: "varchar",
+	})
+		serverIdentifier?: string;
 
 	@OneToOne(() => MinecraftData, data => data.log,{
 		nullable: false,

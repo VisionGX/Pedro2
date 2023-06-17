@@ -1,17 +1,17 @@
 import { GeneralContent, HandlerFunction, HandlerType } from "@garycraft/orizuru";
 import Bot from "../../../Bot";
 import { Handler } from "../../../types/Handler";
-import MinecraftServer from "../../../database/models/MinecraftServer";
 import { EmbedBuilder } from "discord.js";
+import MinecraftLog from "../../../database/models/MinecraftLog";
 
 const handler: Handler<HandlerFunction<Bot, "PlayerJoin">> = {
 	type: "PlayerJoin",
 	run: async (client, data) => {
-		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
+		const mcLogRepo = client.database.source.getRepository(MinecraftLog);
 
-		const server = await mcServerRepo.findOne({ where: { identifier: data.body.id }, relations: ["data"] });
+		const log = await mcLogRepo.findOne({ where: { serverIdentifier: data.body.id } });
 
-		if (!server?.data.log) {
+		if (!log) {
 			const r: GeneralContent = {
 				body: (data.body as Express.Request),
 				err: false,
@@ -21,8 +21,8 @@ const handler: Handler<HandlerFunction<Bot, "PlayerJoin">> = {
 			return r;
 		}
 
-		const guildId = server.data.log.guildId;
-		const channelId = server.data.log.channelId;
+		const guildId = log.guildId;
+		const channelId = log.channelId;
 
 		if (!guildId || !channelId) {
 			const r: GeneralContent = {
