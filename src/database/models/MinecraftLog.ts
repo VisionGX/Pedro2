@@ -9,9 +9,6 @@ export default class MinecraftLog {
 	})
 		guildId!: string;
 
-	@Column()
-		enabled!: boolean;
-
 	@Column({
 		nullable: true,
 		type: "varchar",

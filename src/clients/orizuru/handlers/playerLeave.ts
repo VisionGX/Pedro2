@@ -1,11 +1,11 @@
 import { GeneralContent, HandlerFunction } from "@garycraft/orizuru";
 import Bot from "../../../Bot";
-import { Handler } from "../../../types/Handler";
 import MinecraftServer from "../../../database/models/MinecraftServer";
+import { Handler } from "../../../types/Handler";
 import { EmbedBuilder } from "discord.js";
 
-const handler: Handler<HandlerFunction<Bot, "Log">> = {
-	type: "Log",
+const handler: Handler<HandlerFunction<Bot, "PlayerLeave">> = {
+	type: "PlayerLeave",
 	run: async (client, data) => {
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
 
@@ -57,11 +57,12 @@ const handler: Handler<HandlerFunction<Bot, "Log">> = {
 		}
 
 		const embed = new EmbedBuilder()
-			.setTitle(`Minecraft Server Log for ${data.body.content_type}`)
+			.setTitle(`Player ${data.body.args.player.name} left the server!`)
 			.setDescription(data.body.content || "No content")
 			.setTimestamp();
 
-		for await (const [key, arg] of Object.entries(data.body.args)) {
+		for await (const [key, arg] of Object.entries(data.body.args.player)) {
+			if (key === "ip") continue;
 			embed.addFields({
 				name: key,
 				value: arg,
