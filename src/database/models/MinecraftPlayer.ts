@@ -1,63 +1,76 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import MinecraftData from "./MinecraftData";
-import MinecraftServer from "./MinecraftServer";
-import MinecraftServerPlayer from "./MinecraftServerPlayer";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export default class MinecraftPlayer {
 	@PrimaryGeneratedColumn()
-		id!: number;
+	id!: number;
 
 	@Column({
+		nullable: true,
+		unique: true,
+		type: "text"
+	})
+	username?: string;
+
+	@Column({
+		unique: true,
+		nullable: true,
+		type: "text",
+	})
+	uuid?: string;
+
+	@Column({
+		unique: true,
 		type: "varchar",
 		length: "20",
 	})
-		userId!: string;
-	@Column({
-		unique: true,
-		type: "text"
-	})
-		name!: string;
-
-	@Column({
-		unique: true,
-		nullable: true,
-		type: "text",
-	})
-		uuid?: string;
-
-	@Column({
-		nullable: true,
-		type: "text"
-	})
-		type?: string;
-	
-	@Column({
-		nullable: true,
-		type: "longtext"
-	})
-		customProperties?: string;
+	discordUserId!: string;
 
 	@Column({
 		nullable: true,
 		type: "text",
 	})
-		lastIp?: string;
+	lastIp?: string;
 
 	@Column({
 		default: false,
 	})
-		enabled!: boolean;
+	enabled!: boolean;
 
-	@ManyToOne(() => MinecraftData, data => data.players,{
-		eager: true,
-		cascade: true,
+	@Column({
+		nullable: true,
+		type: "text",
 	})
-		data!: MinecraftData;
+	sessionCookie?: string;
 
-	@OneToMany(() => MinecraftServerPlayer, serverplayer => serverplayer.player,{
-		eager:true,
-		cascade:true
+	@Column({
+		nullable: true,
+		type: "text",
 	})
-		servers!: MinecraftServerPlayer[];
+	invitedBy?: string;
+
+	@Column({
+		type: "text",
+		default: "[]",
+	})
+	invitedPlayers!: string;
+
+	addInvitedPlayer(playerId: string) {
+		const invitedPlayers = JSON.parse(this.invitedPlayers);
+		invitedPlayers.push(playerId);
+		this.invitedPlayers = JSON.stringify(invitedPlayers);
+	}
+	removeInvitedPlayer(playerId: string) {
+		const invitedPlayers = JSON.parse(this.invitedPlayers);
+		const index = invitedPlayers.indexOf(playerId);
+		if (index > -1) {
+			invitedPlayers.splice(index, 1);
+		}
+		this.invitedPlayers = JSON.stringify(invitedPlayers);
+	}
+	getInvitedPlayers():string[]{
+		const invitedPlayers = JSON.parse(this.invitedPlayers);
+		return invitedPlayers;
+	}
+
 }

@@ -1,22 +1,21 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
 import { Interaction } from "../../../types/Executors";
-import { createBaseMinecraftServer } from "../../../util/MinecraftFunctions";
 import MinecraftServer from "../../../database/models/MinecraftServer";
 
 const interaction: Interaction = {
-	name: "mc servers delete",
+	name: "mc servers addallowedrole",
 	type: "SubFunction",
-	description: "Delete a registered Minecraft Server.",
+	description: "Add a role to the allowed roles list.",
 	category: "minecraft",
 	internal_category: "sub",
 	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
 		const name = interaction.options.getString("name", true);
+		const role = interaction.options.getRole("role", true);
 
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
-
 		const mcServer = await mcServerRepo.findOne({ where: { serverName: name } });
-		if(!mcServer) return interaction.reply({
+		if (!mcServer) return interaction.reply({
 			embeds: [
 				new EmbedBuilder()
 					.setTitle("Server not found")
@@ -26,13 +25,14 @@ const interaction: Interaction = {
 			ephemeral: true
 		});
 
-		await mcServerRepo.delete(mcServer.id);
+		mcServer.assignAllowedRole(role.id);
+		await mcServerRepo.save(mcServer);
 
 		return interaction.reply({
 			embeds: [
 				new EmbedBuilder()
-					.setTitle("Server deleted")
-					.setDescription(`Server ${name} has been deleted.`)
+					.setTitle("Role added")
+					.setDescription(`Role ${role.name} has been added to the allowed roles list.`)
 					.setColor(`#${client.config.defaultEmbedColor}`)
 			],
 			ephemeral: true

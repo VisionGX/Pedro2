@@ -16,41 +16,6 @@ const interaction: Interaction = {
 			type: ApplicationCommandOptionType.SubcommandGroup,
 			options: [
 				{
-					name: "add",
-					description: "Add a user to the database.",
-					type: ApplicationCommandOptionType.Subcommand,
-					options: [
-						{
-							name:"discord_user",
-							description: "The discord user to add.",
-							type: ApplicationCommandOptionType.User,
-							required: true,
-						},
-						{
-							name: "username",
-							description: "The username of the user to add.",
-							type: ApplicationCommandOptionType.String,
-							required: true,
-						},
-						{
-							name: "type",
-							description: "The type of user to add.",
-							type: ApplicationCommandOptionType.String,
-							choices: [
-								{
-									name: "Admin",
-									value: "admin",
-								},
-								{
-									name: "User",
-									value: "user",
-								},
-							],
-							required: true,
-						}
-					]
-				},
-				{
 					name: "remove",
 					description: "Remove a user from the database.",
 					type: ApplicationCommandOptionType.Subcommand,
@@ -89,7 +54,7 @@ const interaction: Interaction = {
 					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
-							name:"identifier",
+							name: "identifier",
 							description: "The PaperAPI identifier.",
 							type: ApplicationCommandOptionType.String,
 							required: true,
@@ -129,58 +94,20 @@ const interaction: Interaction = {
 					]
 				},
 				{
-					name: "adduser",
-					description: "Add a user to a server.",
+					name: "addallowedrole",
+					description: "Add a role to the allowed roles list.",
 					type: ApplicationCommandOptionType.Subcommand,
 					options: [
 						{
 							name: "name",
-							description: "The server to add the user to.",
+							description: "The name of the server to add the role to.",
 							type: ApplicationCommandOptionType.String,
 							required: true,
 						},
 						{
-							name: "user",
-							description: "The user to add to the server.",
-							type: ApplicationCommandOptionType.User,
-							required: true,
-						},
-					]
-				},
-				{
-					name: "removeuser",
-					description: "Remove a user from a server.",
-					type: ApplicationCommandOptionType.Subcommand,
-					options: [
-						{
-							name: "name",
-							description: "The server to remove the user from.",
-							type: ApplicationCommandOptionType.String,
-							required: true,
-						},
-						{
-							name: "user",
-							description: "The user to remove from the server.",
-							type: ApplicationCommandOptionType.User,
-							required: true,
-						},
-					]
-				},
-				{
-					name: "listusers",
-					description: "List all users in a server.",
-					type: ApplicationCommandOptionType.Subcommand,
-					options: [
-						{
-							name: "name",
-							description: "The server to list users from.",
-							type: ApplicationCommandOptionType.String,
-							required: true,
-						},
-						{
-							name: "page",
-							description: "The page to list.",
-							type: ApplicationCommandOptionType.Integer,
+							name: "role",
+							description: "The role to add.",
+							type: ApplicationCommandOptionType.Role,
 							required: true,
 						},
 					]
@@ -201,19 +128,24 @@ const interaction: Interaction = {
 			],
 			ephemeral: true
 		});
+		if (!interaction.guild) return interaction.reply({
+			embeds: [
+				new EmbedBuilder()
+					.setTitle("This command can only be used in a guild.")
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
+		});
+
+
 		const category = interaction.options.getSubcommand();
 		const group = interaction.options.getSubcommandGroup();
 
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData = await mcDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
-		if (!mcData || !mcData.enabled) return interaction.reply({
-			embeds: [
-				new EmbedBuilder()
-					.setTitle("Minecraft Module not enabled")
-					.setDescription("Please enable the minecraft module first.")
-					.setColor(`#${client.config.defaultEmbedColor}`)
-			]
-		});
+		const mcData = await mcDataRepo.findOne({ where: { guildId: interaction.guild.id } });
+		if (!mcData) {
+			await mcDataRepo.save({ guildId: interaction.guild.id });
+		}
 
 		const inter = client.interactions.get(`mc_${group}_${category}`);
 		if (!inter) return interaction.reply({

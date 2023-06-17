@@ -1,85 +1,47 @@
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../../Bot";
-import MinecraftData from "../../../database/models/MinecraftData";
-import MinecraftServer from "../../../database/models/MinecraftServer";
 import { Interaction } from "../../../types/Executors";
+import MinecraftData from "../../../database/models/MinecraftData";
+import { createBaseMinecraftServer } from "../../../util/MinecraftFunctions";
+import MinecraftServer from "../../../database/models/MinecraftServer";
 
 const interaction: Interaction = {
 	name: "mc servers create",
 	type: "SubFunction",
-	description: "Create a Minecraft Server.",
-	category: "config",
+	description: "Register a Minecraft Server.",
+	category: "minecraft",
 	internal_category: "sub",
 	async execute(client: Bot, interaction: ChatInputCommandInteraction) {
-		const identifier = interaction.options.getString("identifier");
-		const name = interaction.options.getString("name");
-
-		if(!identifier) {
-			interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must provide an identifier."),
-				],
-			});
-			return;
-		}
-		if(!name) {
-			interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must provide a name."),
-				],
-			});
-			return;
-		}
+		const serverName = interaction.options.getString("name", true);
+		const identifier = interaction.options.getString("identifier", true);
+		
 		const mcDataRepo = client.database.source.getRepository(MinecraftData);
-		const mcData= await mcDataRepo.findOne({ where: { guildId: `${interaction.guildId}` } });
-		if(!mcData) {
-			interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setDescription("You must enable Minecraft Data first."),
-				],
-			});
-			return;
-		}
 		const mcServerRepo = client.database.source.getRepository(MinecraftServer);
-		const mcServer = await mcServerRepo.findOne({
-			where: [
-				{ identifier: identifier },
-				{ serverName: name },
-			]
-		});
-		if (mcServer) {
-			interaction.reply({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(`#${client.config.defaultEmbedColor}`)
-						.setTitle("Server already exists.")
-						.setDescription(
-							`A server with the identifier ${identifier} or name ${name} already exists.`
-						),
-				],
-			});
-			return;
-		}
-		const newServer = await mcServerRepo.save({
-			identifier: identifier,
-			serverName: name,
-			data: mcData,
-		});
-		interaction.reply({
+		const mcData = await mcDataRepo.findOne({ where: { guildId: interaction.guild?.id }, relations: ["servers"] });
+		if(!mcData) return interaction.reply({
 			embeds: [
 				new EmbedBuilder()
+					.setTitle("Not initialized")
+					.setDescription("An error has ocurred, try again.")
 					.setColor(`#${client.config.defaultEmbedColor}`)
-					.setTitle("Server created.")
-					.setDescription(
-						`A server with the identifier ${newServer.identifier} and name ${newServer.serverName} has been created.`
-					),
 			],
+			ephemeral: true
+		});
+
+		const newServer = await createBaseMinecraftServer(serverName, identifier, mcData);
+		mcData.servers?.push(newServer);
+		await mcDataRepo.save(mcData);
+		await mcServerRepo.save(newServer);
+		
+
+		return interaction.reply({
+			embeds: [
+				new EmbedBuilder()
+					.setTitle("Server created")
+					.setDescription(`Server ${serverName} has been created.`)
+					.setColor(`#${client.config.defaultEmbedColor}`)
+			],
+			ephemeral: true
 		});
 	}
 };

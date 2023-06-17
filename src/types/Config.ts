@@ -1,6 +1,7 @@
 type BotConfig = {
 	prefix: string;
 	token: string;
+	client_secret: string;
 	admins: string[];
 	activity: {
 		message: string;

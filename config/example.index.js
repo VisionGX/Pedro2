@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-undef
 module.exports = {
-	// The bot Token
+	// The bot Token and Client_Secret
 	token: "Discord Bot Token",
 	prefix: "custombot.",
+	client_secret: "Discord Client Secret",
 	// The bot Admins - Can use commands like `[prefix]stats`
 	admins: ["Discord ID", "Discord ID"],
 	activity: {

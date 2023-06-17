@@ -9,11 +9,13 @@ import API from "./API";
 import { JSONPackage } from "./types/JSONPackage";
 import CLI from "./cli/CLI";
 import findRecursive from "@spaceproject/findrecursive";
+import { Orizuru, HandlerFunction, HandlerType } from "@garycraft/orizuru";
+import { Handler } from "./types/Handler";
 
 const nonPrivilegedIntents = [
 	GatewayIntentBits.Guilds,
 	GatewayIntentBits.GuildMembers,
-	GatewayIntentBits.GuildBans,
+	GatewayIntentBits.GuildModeration,
 	GatewayIntentBits.GuildEmojisAndStickers,
 	GatewayIntentBits.GuildIntegrations,
 	GatewayIntentBits.GuildWebhooks,
@@ -42,6 +44,10 @@ class Bot extends Client {
 	readonly server: API;
 	readonly commandline: CLI;
 	readonly package: JSONPackage;
+	// Non-Standard Clients
+	clients: {
+		orizuru: Orizuru
+	};
 	constructor() {
 		if (process.env.NODE_ENV === "development") {
 			intents = nonPrivilegedIntents.concat(privilegedIntents);
@@ -61,6 +67,17 @@ class Bot extends Client {
 		this.server = new API(this);
 		this.commandline = new CLI(this, process.stdin, process.stdout);
 		this.package = require("../package.json");
+		// Non-Standard Clients
+		this.clients = {
+			orizuru: new Orizuru(this, {
+				reqAuthValidator: (req) => {
+					const authHeader = req.headers.authorization;
+					if (!authHeader) return false;
+					if (authHeader !== this.config.api.password) return false;
+					return true;
+				},
+			}),
+		};
 	}
 	async registerEvents() {
 		const events = await findRecursive(`${__dirname}/events`);
@@ -103,12 +120,23 @@ class Bot extends Client {
 			Schedule.scheduleJob(job.name, job.cronInterval, job.task.bind(null, this));
 		});
 	}
+	// Orizuru-Specific
+	async loadOrizuruHandlers() {
+		const handlers = await findRecursive(`${__dirname}/clients/orizuru/handlers`);
+		for (const [file, dir] of handlers) {
+			if (file.endsWith(".map")) continue;
+			const handler: Handler<HandlerFunction<Bot, HandlerType>> = await import(`${dir}/${file}`).then(m => m.default);
+			this.logger.info(`Loading Orizuru Handler ${file}`);
+			this.clients.orizuru.addHandler(handler.type, handler.run);
+		}
+	}
 	async start() {
 		await this.database.init();
 		await this.registerEvents();
 		await this.loadCommands();
 		await this.loadInteractions();
 		await this.loadJobs();
+		await this.loadOrizuruHandlers();
 		await this.login(this.config.token);
 		await this.startJobs();
 	}

@@ -6,6 +6,7 @@ import { ServerRequest } from "./types/API";
 export interface Req<T> extends Express.Request {
 	body: T
 }
+import cookieParser from "cookie-parser";
 class API {
 	client: Bot;
 	server: Express.Application;
@@ -17,6 +18,8 @@ class API {
 		this.server.use(express.json());
 		// this will parse Content-Type:  application/x-www-form-urlencoded
 		this.server.use(express.urlencoded({ extended: true }));
+
+		this.server.use(cookieParser());
 
 		// Set the X-Powered-By header to SpaceProjectAPI
 		this.server.use((req, res, next) => {
@@ -64,6 +67,10 @@ class API {
 			route.delete ? Iroute.delete(route.delete) : null;
 			route.patch ? Iroute.patch(route.patch) : null;
 		}
+
+		// Register Orizuru route
+		this.server.post("/orizuru", this.client.clients.orizuru.getExpressHandler());
+
 
 		// Register html, css, and js files
 		this.server.use(express.static(`${__dirname}/../src/public`));
