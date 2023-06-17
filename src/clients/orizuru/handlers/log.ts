@@ -1,7 +1,6 @@
 import { GeneralContent, HandlerFunction } from "@garycraft/orizuru";
 import Bot from "../../../Bot";
 import { Handler } from "../../../types/Handler";
-import MinecraftServer from "../../../database/models/MinecraftServer";
 import { EmbedBuilder } from "discord.js";
 import MinecraftLog from "../../../database/models/MinecraftLog";
 
@@ -60,12 +59,15 @@ const handler: Handler<HandlerFunction<Bot, "Log">> = {
 			.setDescription(data.body.content || "No content")
 			.setTimestamp();
 
-		for await (const [key, arg] of Object.entries(data.body.args)) {
-			embed.addFields({
-				name: key,
-				value: arg,
-			});
-		}
+		embed.addFields([
+			{ name: "Server Name", value: `${data.body.args.serverName || "Not Received"}` },
+			{ name: "Server Version", value: `${data.body.args.serverVersion || "Not Received"}` },
+			{ name: "Server MOTD", value: `${data.body.args.serverMotd || "Not Received"}` },
+			{ name: "Server Max Players", value: `${data.body.args.serverMaxPlayers || "Not Received"}` },
+			{ name: "Server IP", value: `${data.body.args.serverIP || "Not Received"}` },
+			{ name: "Server Port", value: `${data.body.args.serverPort || "Not Received"}` },
+			{ name: "Plugin Version", value: `${data.body.args.pluginVersion || "Not Received"}` }
+		]);
 
 		channel.send({ embeds: [embed] });
 
