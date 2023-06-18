@@ -3,7 +3,7 @@ import { AuthContent, HandlerFunction } from "@garycraft/orizuru";
 import { Handler } from "@src/types/Handler";
 import MinecraftPlayer from "../../../database/models/MinecraftPlayer";
 import MinecraftServer from "../../../database/models/MinecraftServer";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
 import { hasMemberPermission } from "../../../util/MinecraftFunctions";
 
 const handler: Handler<HandlerFunction<Bot, "Auth">> = {

@@ -5,13 +5,12 @@ import { Handler } from "../../../types/Handler";
 const handler: Handler<HandlerFunction<Bot, "Chat">> = {
 	type: "Chat",
 	run: async (client, data) => {
-		const r: GeneralContent = {
+		return {
+			body: data.body,
 			err: false,
 			code: 200,
-			message: "Chat Received",
-			body: data.body as Express.Request
-		};
-		return r;
+			message: "Chat Received"
+		}
 	}
 }
 export default handler;

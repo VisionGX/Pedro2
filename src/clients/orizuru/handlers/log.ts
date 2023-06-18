@@ -12,46 +12,42 @@ const handler: Handler<HandlerFunction<Bot, "Log">> = {
 		const log = await mcLogRepo.findOne({ where: { serverIdentifier: data.body.id } });
 
 		if (!log) {
-			const r: GeneralContent = {
-				body: (data.body as Express.Request),
+			return {
+				body: data.body,
 				err: false,
 				code: 200,
 				message: "Received!"
 			};
-			return r;
 		}
 
 		const guildId = log.guildId;
 		const channelId = log.channelId;
 
 		if (!guildId || !channelId) {
-			const r: GeneralContent = {
-				body: (data.body as Express.Request),
+			return {
+				body: data.body,
 				err: false,
 				code: 404,
 				message: "Server not found!"
 			};
-			return r;
 		}
 		const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
 		if (!guild) {
-			const r: GeneralContent = {
-				body: (data.body as Express.Request),
+			return {
+				body: data.body,
 				err: false,
 				code: 404,
 				message: "Guild not found!"
 			};
-			return r;
 		}
 		const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
 		if (!channel || !channel.isTextBased()) {
-			const r: GeneralContent = {
-				body: (data.body as Express.Request),
+			return {
+				body: data.body,
 				err: false,
 				code: 404,
 				message: "Channel not found!"
 			};
-			return r;
 		}
 
 		const embed = new EmbedBuilder()
@@ -72,14 +68,12 @@ const handler: Handler<HandlerFunction<Bot, "Log">> = {
 
 		channel.send({ embeds: [embed] });
 
-		const r: GeneralContent = {
-			body: (data.body as Express.Request),
+		return {
+			body: data.body,
 			err: false,
 			code: 200,
 			message: "Received!"
 		};
-
-		return r;
 	}
 }
 export default handler;
