@@ -3,6 +3,8 @@ import MinecraftPlayer from "../database/models/MinecraftPlayer";
 import { Repository } from "typeorm";
 import MinecraftData from "../database/models/MinecraftData";
 import Bot from "../Bot";
+import MinecraftStatusMessage from "../database/models/MinecraftStatusMessage";
+import { TextBasedChannel } from "discord.js";
 
 const createBaseMinecraftUser = async (discordId: string, invitedBy_Id?: string, repo?: Repository<MinecraftPlayer>): Promise<MinecraftPlayer> => {
 	const newUser = new MinecraftPlayer();
@@ -23,13 +25,13 @@ const createBaseMinecraftUser = async (discordId: string, invitedBy_Id?: string,
 	newUser.lastIp = undefined;
 	newUser.username = undefined;
 	newUser.uuid = undefined;
-	
+
 	return newUser;
 };
 
-const createBaseMinecraftServer = async (name: string, identifier: string, data:MinecraftData): Promise<MinecraftServer> => {
+const createBaseMinecraftServer = async (name: string, identifier: string, data: MinecraftData): Promise<MinecraftServer> => {
 	const newServer = new MinecraftServer();
-	
+
 	newServer.serverName = name;
 	newServer.identifier = identifier;
 	newServer.data = data;
@@ -50,4 +52,29 @@ const hasMemberPermission = async (client: Bot, guildId: string, memberId: strin
 	return hasRole || isAdmin;
 };
 
-export { createBaseMinecraftUser, createBaseMinecraftServer, hasMemberPermission };
+const getStatusChannel = async (client: Bot, serverIdentifier: string): Promise<TextBasedChannel | null> => {
+	const statusMessageRepo = client.database.source.getRepository(MinecraftStatusMessage);
+	const statusMessage = await statusMessageRepo.findOne({
+		where: {
+			serverIdentifier: serverIdentifier
+		}
+	});
+	if (!statusMessage) {
+		return null;
+	}
+	const guildId = statusMessage.guildId;
+	const channelId = statusMessage.channelId;
+	if (!guildId || !channelId) {
+		return null;
+	}
+	const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
+	if (!guild) {
+		return null;
+	}
+	const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
+	if (!channel || !channel.isTextBased()) {
+		return null;
+	}
+	return channel;
+}
+export { createBaseMinecraftUser, createBaseMinecraftServer, hasMemberPermission, getStatusChannel };

@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message, TextBasedChannel } from "discord.js";
 import GuildMessageEmbed from "../database/models/MessageEmbed";
 
 function buildEmbedFrom(dbembed: GuildMessageEmbed): EmbedBuilder {
@@ -27,4 +27,27 @@ function buildEmbedFrom(dbembed: GuildMessageEmbed): EmbedBuilder {
 	return embed;
 }
 
-export { buildEmbedFrom };
+async function createOrEditMessage(channel: TextBasedChannel, embed: EmbedBuilder, messageId?: string): Promise<Message | null> {
+	if (!messageId) {
+		const newMessage = await channel.send({
+			embeds: [embed]
+		}).catch(() => null);
+		return newMessage;
+	} else {
+		const lastMessage = channel.messages.cache.get(messageId) || await channel.messages.fetch(messageId).catch(() => null);
+		if (!lastMessage) {
+			const newMessage = await channel.send({
+				embeds: [embed]
+			}).catch(() => null);
+			return newMessage;
+		}
+		else {
+			const msg = await lastMessage.edit({
+				embeds: [embed]
+			}).catch(() => null);
+			return msg;
+		}
+	}
+}
+
+export { buildEmbedFrom, createOrEditMessage };

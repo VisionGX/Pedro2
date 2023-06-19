@@ -4,6 +4,8 @@ import { Handler } from "../../../types/Handler";
 import MinecraftStatusMessage from "../../../database/models/MinecraftStatusMessage";
 import MinecraftServer from "../../../database/models/MinecraftServer";
 import { EmbedBuilder } from "discord.js";
+import { createOrEditMessage } from "../../../util/Functions";
+import { getStatusChannel } from "../../../util/MinecraftFunctions";
 
 
 const handler: Handler<HandlerFunction<Bot, "Performance">> = {
@@ -23,32 +25,13 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				message: "Performance Received"
 			}
 		}
-		const guildId = statusMessage.guildId;
-		const channelId = statusMessage.channelId;
-		if (!guildId || !channelId) {
+		const statusChannel = await getStatusChannel(client, data.body.id);
+		if (!statusChannel) {
 			return {
 				body: data.body,
 				err: false,
 				code: 404,
-				message: "Empty guildId or channelId"
-			};
-		}
-		const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
-		if (!guild) {
-			return {
-				body: data.body,
-				err: false,
-				code: 404,
-				message: "Guild not found!"
-			};
-		}
-		const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
-		if (!channel || !channel.isTextBased()) {
-			return {
-				body: data.body,
-				err: false,
-				code: 404,
-				message: "Channel not found!"
+				message: "Could not find status channel!"
 			}
 		}
 		const minecraftServerRepo = client.database.source.getRepository(MinecraftServer);
@@ -99,43 +82,17 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				text: `Ultima Actualizacion: ${new Date().toLocaleString()}`
 			});
 
-		if (!statusMessage.lastMessageId) {
-			const newMessage = await channel.send({
-				embeds: [embed]
-			}).catch(() => null);
-			if (!newMessage) {
-				return {
-					body: data.body,
-					err: false,
-					code: 500,
-					message: "Error sending message"
-				}
-			}
-			statusMessage.lastMessageId = newMessage.id;
-			await statusMessageRepo.save(statusMessage);
-		} else {
-			const lastMessage = channel.messages.cache.get(statusMessage.lastMessageId) || await channel.messages.fetch(statusMessage.lastMessageId).catch(() => null);
-			if (!lastMessage) {
-				const newMessage = await channel.send({
-					embeds: [embed]
-				}).catch(() => null);
-				if (!newMessage) {
-					return {
-						body: data.body,
-						err: false,
-						code: 500,
-						message: "Error sending message"
-					}
-				}
-				statusMessage.lastMessageId = newMessage.id;
-				await statusMessageRepo.save(statusMessage);
-			}
-			else {
-				await lastMessage.edit({
-					embeds: [embed]
-				}).catch(() => null);
+		const message = await createOrEditMessage(statusChannel, embed, statusMessage.lastMessageId);
+		if (!message) {
+			return {
+				body: data.body,
+				err: false,
+				code: 403,
+				message: "Could not send Message!"
 			}
 		}
+		statusMessage.lastMessageId = message.id;
+		await statusMessageRepo.save(statusMessage);
 		return {
 			body: data.body,
 			err: false,
