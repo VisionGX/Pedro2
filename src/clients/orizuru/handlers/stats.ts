@@ -77,6 +77,10 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 					value: `${minecraftServer.serverName || "Unknown"}`
 				},
 				{
+					name: "Jugadores Conectados",
+					value: `${data.body.args.players.online}/${data.body.args.players.max}`
+				},
+				{
 					name: "Estado de Rendimiento",
 					// Based on average TPS from array, if les than 12, is bad, if it's less than 15, it's avg, if it's less than 18, it's okay, if it's less than 20, it's good
 					value: `${avgTPS < 12 ? ":red_circle: Malo" : avgTPS < 15 ? ":yellow_circle: Promedio" : avgTPS < 18 ? ":blue_circle: Bueno" : ":green_circle: Excelente"}`
