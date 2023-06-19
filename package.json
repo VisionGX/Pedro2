@@ -1,6 +1,6 @@
 {
 	"name": "fzstbot",
-	"version": "1.5.2",
+	"version": "1.5.3",
 	"description": "A custom Discord specific-purpose bot, written in TypeScript, for the Fzst Discord Server.",
 	"main": "dist/index.js",
 	"source": "src",
