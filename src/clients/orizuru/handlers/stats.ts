@@ -48,7 +48,7 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				message: "Minecraft Server not found!"
 			}
 		}
-		const latestTPS = data.body.args.tps[data.body.args.tps.length - 1];
+		const latestTPS = data.body.args.tps[0];
 
 
 		const embed = new EmbedBuilder()
