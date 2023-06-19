@@ -91,7 +91,7 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				},
 				{
 					name: "Estado de CPU",
-					value: `Uso: ${data.body.args.cpuPercent} % del disponible`
+					value: `Uso: ${data.body.args.cpuPercent.toFixed(2)} % del disponible`
 				},
 			])
 			.setColor(`#${client.config.defaultEmbedColor}`)
