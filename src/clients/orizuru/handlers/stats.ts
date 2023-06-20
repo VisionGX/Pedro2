@@ -48,7 +48,7 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				message: "Minecraft Server not found!"
 			}
 		}
-		const latestTPS = data.body.args.tps[0];
+		const lowestTPS = data.body.args.tps.sort((a, b) => a - b)[0];
 
 
 		const embed = new EmbedBuilder()
@@ -66,7 +66,7 @@ const handler: Handler<HandlerFunction<Bot, "Performance">> = {
 				{
 					name: "Estado de Rendimiento",
 					// Based on average TPS from array, if les than 12, is bad, if it's less than 15, it's avg, if it's less than 18, it's okay, if it's less than 20, it's good
-					value: `${latestTPS < 12 ? ":red_circle: Malo" : latestTPS < 15 ? ":yellow_circle: Promedio" : latestTPS < 18 ? ":blue_circle: Bueno" : ":green_circle: Excelente"}`
+					value: `${lowestTPS < 12 ? ":red_circle: Malo" : lowestTPS < 15 ? ":yellow_circle: Promedio" : lowestTPS < 18 ? ":blue_circle: Bueno" : ":green_circle: Excelente"}`
 				},
 				{
 					name: "Estado de Memoria",
