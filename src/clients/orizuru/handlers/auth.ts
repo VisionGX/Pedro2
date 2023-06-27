@@ -110,7 +110,7 @@ const handler: Handler<HandlerFunction<Bot, "Auth">> = {
 		}
 		// Let's check if the user has the role or if they have been invited by someone who has the role
 		const canJoin = await hasMemberPermission(client, mcServer.data.guildId, discordUser.id, mcServer);
-		if (!canJoin && !mcPlayer.invitedBy) {
+		if (!canJoin) {
 			// console.log("No permission and not invited by anyone");
 			const r: AuthContent = {
 				body: {
@@ -124,54 +124,6 @@ const handler: Handler<HandlerFunction<Bot, "Auth">> = {
 				}, err: false, code: 403
 			};
 			return r;
-		} else if (mcPlayer.invitedBy) {
-			// console.log("Invited by", mcPlayer.invitedBy);
-			const inviter = await mcPlayerRepo.findOne({
-				where: {
-					discordUserId: mcPlayer.invitedBy,
-				},
-			});
-			if (!inviter) {
-				return {
-					body: {
-						player: {
-							name: data.body.args.player.name,
-							uuid: data.body.args.player.uuid,
-							ip: data.body.args.player.ip,
-						},
-						name: discordUser.username,
-						identifier: mcPlayer.discordUserId,
-					}, err: false, code: 404
-				};
-			}
-			const inviterMember = discordGuild.members.cache.get(inviter.discordUserId) || await discordGuild.members.fetch(inviter.discordUserId).catch(() => null);
-			if (!inviterMember) {
-				return {
-					body: {
-						player: {
-							name: data.body.args.player.name,
-							uuid: data.body.args.player.uuid,
-							ip: data.body.args.player.ip,
-						},
-						name: discordUser.username,
-						identifier: mcPlayer.discordUserId,
-					}, err: false, code: 404
-				};
-			}
-			if (!await hasMemberPermission(client, mcServer.data.guildId, inviterMember.id, mcServer)) {
-				// console.log("Inviter has no permission");
-				return {
-					body: {
-						player: {
-							name: data.body.args.player.name,
-							uuid: data.body.args.player.uuid,
-							ip: data.body.args.player.ip,
-						},
-						name: discordUser.username,
-						identifier: mcPlayer.discordUserId,
-					}, err: false, code: 403
-				};
-			}
 		}
 		// Now we verify Ip matching to prevent people using other people's accounts
 		if (mcPlayer.lastIp !== data.body.args.player.ip) {

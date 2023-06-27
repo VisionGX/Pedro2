@@ -43,34 +43,4 @@ export default class MinecraftPlayer {
 	})
 	sessionCookie?: string;
 
-	@Column({
-		nullable: true,
-		type: "text",
-	})
-	invitedBy?: string;
-
-	@Column({
-		type: "text",
-		default: "[]",
-	})
-	invitedPlayers!: string;
-
-	addInvitedPlayer(playerId: string) {
-		const invitedPlayers = JSON.parse(this.invitedPlayers);
-		invitedPlayers.push(playerId);
-		this.invitedPlayers = JSON.stringify(invitedPlayers);
-	}
-	removeInvitedPlayer(playerId: string) {
-		const invitedPlayers = JSON.parse(this.invitedPlayers);
-		const index = invitedPlayers.indexOf(playerId);
-		if (index > -1) {
-			invitedPlayers.splice(index, 1);
-		}
-		this.invitedPlayers = JSON.stringify(invitedPlayers);
-	}
-	getInvitedPlayers():string[]{
-		const invitedPlayers = JSON.parse(this.invitedPlayers);
-		return invitedPlayers;
-	}
-
 }

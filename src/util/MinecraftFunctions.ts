@@ -6,21 +6,10 @@ import Bot from "../Bot";
 import MinecraftStatusMessage from "../database/models/MinecraftStatusMessage";
 import { TextBasedChannel } from "discord.js";
 
-const createBaseMinecraftUser = async (discordId: string, invitedBy_Id?: string, repo?: Repository<MinecraftPlayer>): Promise<MinecraftPlayer> => {
+const createBaseMinecraftUser = async (discordId: string): Promise<MinecraftPlayer> => {
 	const newUser = new MinecraftPlayer();
 	newUser.enabled = false;
 	newUser.discordUserId = discordId;
-
-	if (invitedBy_Id && !repo) throw new Error("Repository is required if invitedBy_Id is provided.");
-	if (repo && invitedBy_Id) {
-		const invitedByUser = await repo.findOne({
-			where: {
-				discordUserId: invitedBy_Id
-			}
-		});
-		if (!invitedByUser) throw new Error("InvitedBy user not found.");
-		newUser.invitedBy = invitedByUser.discordUserId;
-	}
 
 	newUser.lastIp = undefined;
 	newUser.username = undefined;
