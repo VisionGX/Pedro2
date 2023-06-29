@@ -38,6 +38,11 @@ export default class MinecraftPlayer {
 	enabled!: boolean;
 
 	@Column({
+		default:true,
+	})
+	notifyOnLogin!: boolean;
+
+	@Column({
 		nullable: true,
 		type: "text",
 	})

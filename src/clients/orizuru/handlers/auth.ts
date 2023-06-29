@@ -189,13 +189,27 @@ const handler: Handler<HandlerFunction<Bot, "Auth">> = {
 			return r;
 		}
 
-		const successEmbed = new EmbedBuilder()
-			.setTitle("Minecraft Authentication!")
-			.setDescription("You have Logged in to the Minecraft")
-			.setColor(`#${client.config.defaultEmbedColor}`);
-		userMember.send({
-			embeds: [successEmbed],
-		}).catch(() => null);
+		if (mcPlayer.notifyOnLogin) {
+			const disableNotifyBtn = new ButtonBuilder()
+				.setCustomId(`mcAuthDisableNotify|${mcPlayer.discordUserId}`)
+				.setLabel("Disable Notifications")
+				.setStyle(ButtonStyle.Secondary)
+				.setEmoji("🔕");
+			const actionRow = new ActionRowBuilder<ButtonBuilder>()
+				.addComponents(
+					disableNotifyBtn
+				);
+			const successEmbed = new EmbedBuilder()
+				.setTitle("Minecraft Authentication!")
+				.setDescription("You have Logged in to the Minecraft")
+				.setColor(`#${client.config.defaultEmbedColor}`);
+			userMember.send({
+				embeds: [successEmbed],
+				components: [
+					actionRow,
+				],
+			}).catch(() => null);
+		}
 
 		const r: AuthContent = {
 			body: {
