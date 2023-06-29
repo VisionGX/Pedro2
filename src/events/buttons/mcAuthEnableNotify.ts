@@ -26,7 +26,7 @@ const e: EventExecutor<{ interaction: ButtonInteraction }> = async (client, para
 		.setStyle(ButtonStyle.Secondary)
 		.setLabel("Disable Notifications")
 		.setCustomId(`mcAuthDisableNotify|${mcUser.discordUserId}`)
-		.setEmoji("🔔");
+		.setEmoji("🔕");
 	const actionRow = new ActionRowBuilder<ButtonBuilder>()
 		.addComponents(disableNotifyButton);
 
