@@ -174,7 +174,7 @@ const handler: Handler<HandlerFunction<Bot, "Auth">> = {
 				.setColor(`#${client.config.defaultEmbedColor}`)
 			await userMember.send({
 				embeds: [embed],
-			});
+			}).catch(() => null);
 			const r: AuthContent = {
 				body: {
 					player: {
